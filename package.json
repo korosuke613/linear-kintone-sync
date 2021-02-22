@@ -1,0 +1,45 @@
+{
+  "name": "linekin",
+  "version": "1.0.0",
+  "description": "Linear.app to kintone",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm-run-all -l -s clean -p build:*",
+    "build:compile": "run-p compile",
+    "compile": "run-p -l compile:*",
+    "compile:cjs": "tsc",
+    "clean": "rimraf lib",
+    "prerelease": "npm-run-all -p lint test -s build",
+    "lint": "eslint --max-warnings 0 'src/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts'",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/korosuke613/linekin.git"
+  },
+  "files": [
+    "lib"
+  ],
+  "keywords": [],
+  "author": "Futa Hirakoba <korosuke613613@gmail.com> (https://korosuke613.github.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/korosuke613/linekin/issues"
+  },
+  "homepage": "https://github.com/korosuke613/linekin#readme",
+  "devDependencies": {
+    "@cybozu/eslint-config": "^11.0.4",
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.30",
+    "eslint": "^7.20.0",
+    "jest": "^26.6.3",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^26.5.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.5"
+  }
+}
