@@ -1,4 +1,2 @@
-(async () => {
-  const a = 1;
-  await console.log(a);
-})();
+export * from "./LinearKintoneSync";
+export * from "./libs";

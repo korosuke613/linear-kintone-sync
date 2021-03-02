@@ -1,2 +1,2 @@
-# linekin
-Linear.app to kintone
+# linear-kintone-sync
+Synchronize Linear.app and kintone.
