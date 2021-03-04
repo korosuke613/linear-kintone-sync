@@ -1,4 +1,5 @@
-import { getKintoneAppsFromEnv, KintoneApps } from "../libs";
+import { getKintoneAppsFromEnv } from "../libs";
+import { KintoneApps } from "../types";
 
 process.env.KINTONE_BASE_URL = "a";
 process.env.KINTONE_ISSUE_APP_ID = "b";
