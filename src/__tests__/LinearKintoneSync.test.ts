@@ -202,6 +202,31 @@ describe(LinearKintoneSync, () => {
     expect(actual).toEqual(expected);
   });
 
+  describe("#handle error", async () => {
+    test("エラーを吐き出す", async () => {
+      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
+        message: "エラーテスト",
+        id: "123456",
+        code: "ErrorCode",
+      });
+      await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
+        "[520] [ErrorCode] エラーテスト (123456)"
+      );
+    });
+    test("headersの中身が空", async () => {
+      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
+        message: "エラーテスト",
+        id: "123456",
+        code: "ErrorCode",
+      });
+      try {
+        await lks.handle(updateIssueForLabel);
+      } catch (e) {
+        expect(e.headers).toEqual({});
+      }
+    });
+  });
+
   test("#addCustomeCallback", async () => {
     lks.addCustomCallback<CreateIssueWebhook>(
       "CreateIssueWebhook",

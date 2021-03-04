@@ -1,21 +1,6 @@
 import { Env } from "@humanwhocodes/env";
-
-export interface KintoneAppConfig {
-  id: string;
-  token: string;
-  fieldCodeOfPrimaryKey: string;
-}
-
-export interface KintoneApps {
-  baseUrl: string;
-  issue: KintoneAppConfig;
-}
-
-export type RecordForParameter = {
-  [fieldCode: string]: {
-    value: unknown;
-  };
-};
+import { KintoneRestAPIClient } from "@kintone/rest-api-client";
+import { KintoneAppConfig, KintoneApps, RecordForParameter } from "./types";
 
 export const getKintoneAppsFromEnv = (): KintoneApps => {
   const env = new Env();
@@ -31,4 +16,34 @@ export const getKintoneAppsFromEnv = (): KintoneApps => {
     baseUrl,
     issue,
   };
+};
+
+export const getKintoneClient = (apps: KintoneApps, type: "Issue") => {
+  let apiToken = "";
+  switch (type) {
+    case "Issue":
+      apiToken = apps.issue.token;
+  }
+
+  return new KintoneRestAPIClient({
+    baseUrl: apps.baseUrl,
+    auth: {
+      apiToken,
+    },
+  });
+};
+
+export const generateKintoneRecordParam = (data: Record<string, any>) => {
+  const record: RecordForParameter = {};
+
+  for (const [key, value] of Object.entries(data)) {
+    const stringValue = value.toString();
+    if (typeof value === "object" && stringValue === "[object Object]") {
+      continue;
+    }
+    record[key] = {
+      value: stringValue,
+    };
+  }
+  return record;
 };

@@ -1,2 +1,2 @@
 export * from "./LinearKintoneSync";
-export * from "./libs";
+export * from "./types";
