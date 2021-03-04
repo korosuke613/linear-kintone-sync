@@ -15,10 +15,6 @@ export class LinearKintoneSync {
     this.addCallbacks();
   }
 
-  getApps() {
-    return this.apps;
-  }
-
   async handle(webhook: Webhook) {
     let result;
     try {

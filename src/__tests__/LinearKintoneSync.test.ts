@@ -77,68 +77,111 @@ describe(LinearKintoneSync, () => {
     expect(actual).toEqual(expected);
   });
 
-  test("#handle UpdateIssue", async () => {
-    nock(dummyKintoneApps.baseUrl)
-      .put("/k/v1/record.json")
-      .reply(200, { revision: 1 });
+  describe("#handle UpdateIssue", () => {
+    test("正常系", async () => {
+      nock(dummyKintoneApps.baseUrl)
+        .put("/k/v1/record.json")
+        .reply(200, { revision: 1 });
 
-    const actual = await lks.handle(updateIssueForLabel);
-    const expected = {
-      app: "0",
-      updateKey: {
-        field: "id",
-        value: "236e0fe8-xxxx-xxxx-xxxx-b2df06e33810",
-      },
-      record: {
-        assigneeId: {
-          value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+      const actual = await lks.handle(updateIssueForLabel);
+      const expected = {
+        app: "0",
+        updateKey: {
+          field: "id",
+          value: "236e0fe8-xxxx-xxxx-xxxx-b2df06e33810",
         },
-        boardOrder: {
-          value: "-86.81",
+        record: {
+          assigneeId: {
+            value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+          },
+          boardOrder: {
+            value: "-86.81",
+          },
+          createdAt: {
+            value: "2021-01-30T11:19:39.427Z",
+          },
+          labelIds: {
+            value: "",
+          },
+          subscriberIds: {
+            value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+          },
+          previousIdentifiers: {
+            value: "",
+          },
+          creatorId: {
+            value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+          },
+          cycleId: {
+            value: "8becebd5-xxxx-xxxx-xxxx-5a4c46206590",
+          },
+          number: {
+            value: "11",
+          },
+          priority: {
+            value: "0",
+          },
+          priorityLabel: {
+            value: "No priority",
+          },
+          stateId: {
+            value: "e788ada6-xxxx-xxxx-xxxx-5717c26104ad",
+          },
+          teamId: {
+            value: "eeaa0cbd-xxxx-xxxx-xxxx-1c701c3485f1",
+          },
+          title: {
+            value: "webhook test",
+          },
+          updatedAt: {
+            value: "2021-01-30T11:24:17.747Z",
+          },
         },
-        createdAt: {
-          value: "2021-01-30T11:19:39.427Z",
-        },
-        labelIds: {
-          value: "",
-        },
-        subscriberIds: {
-          value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
-        },
-        previousIdentifiers: {
-          value: "",
-        },
-        creatorId: {
-          value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
-        },
-        cycleId: {
-          value: "8becebd5-xxxx-xxxx-xxxx-5a4c46206590",
-        },
-        number: {
-          value: "11",
-        },
-        priority: {
-          value: "0",
-        },
-        priorityLabel: {
-          value: "No priority",
-        },
-        stateId: {
-          value: "e788ada6-xxxx-xxxx-xxxx-5717c26104ad",
-        },
-        teamId: {
-          value: "eeaa0cbd-xxxx-xxxx-xxxx-1c701c3485f1",
-        },
-        title: {
-          value: "webhook test",
-        },
-        updatedAt: {
-          value: "2021-01-30T11:24:17.747Z",
-        },
-      },
-    };
+      };
 
-    expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
+    });
+
+    test("異常系", async () => {
+      const invalidKintoneApps: KintoneApps = {
+        baseUrl: "https://invalidKorosuke613.cybozu.com",
+        issue: {
+          id: "0",
+          token: "token",
+          fieldCodeOfPrimaryKey: "invalid",
+        },
+      };
+      nock("https://invalidKorosuke613.cybozu.com")
+        .put("/k/v1/record.json")
+        .reply(200, { revision: 1 });
+      const invalidLks = new LinearKintoneSync(invalidKintoneApps);
+
+      await expect(invalidLks.handle(updateIssueForLabel)).rejects.toThrow(
+        "fieldCodeOfPrimaryKey is invalid: invalid"
+      );
+    });
+    test("エラーを吐き出す", async () => {
+      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
+        message: "エラーテスト",
+        id: "123456",
+        code: "ErrorCode",
+      });
+      await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
+        "[520] [ErrorCode] エラーテスト (123456)"
+      );
+    });
+    test("headersの中身が空", async () => {
+      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
+        message: "エラーテスト",
+        id: "123456",
+        code: "ErrorCode",
+      });
+      try {
+        await lks.handle(updateIssueForLabel);
+      } catch (e) {
+        expect(e.headers).toEqual({});
+      }
+    });
   });
 
   test("#handle RemoveIssue", async () => {
@@ -200,31 +243,6 @@ describe(LinearKintoneSync, () => {
     };
 
     expect(actual).toEqual(expected);
-  });
-
-  describe("#handle error", async () => {
-    test("エラーを吐き出す", async () => {
-      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
-        message: "エラーテスト",
-        id: "123456",
-        code: "ErrorCode",
-      });
-      await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
-        "[520] [ErrorCode] エラーテスト (123456)"
-      );
-    });
-    test("headersの中身が空", async () => {
-      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
-        message: "エラーテスト",
-        id: "123456",
-        code: "ErrorCode",
-      });
-      try {
-        await lks.handle(updateIssueForLabel);
-      } catch (e) {
-        expect(e.headers).toEqual({});
-      }
-    });
   });
 
   test("#addCustomeCallback", async () => {
