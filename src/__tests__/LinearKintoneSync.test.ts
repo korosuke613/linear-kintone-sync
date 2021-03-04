@@ -144,14 +144,14 @@ describe(LinearKintoneSync, () => {
 
     test("異常系", async () => {
       const invalidKintoneApps: KintoneApps = {
-        baseUrl: "https://korosuke613.cybozu.com",
+        baseUrl: "https://invalidKorosuke613.cybozu.com",
         issue: {
           id: "0",
           token: "token",
           fieldCodeOfPrimaryKey: "invalid",
         },
       };
-      nock(invalidKintoneApps.baseUrl)
+      nock("https://invalidKorosuke613.cybozu.com")
         .put("/k/v1/record.json")
         .reply(200, { revision: 1 });
       const invalidLks = new LinearKintoneSync(invalidKintoneApps);
@@ -159,6 +159,28 @@ describe(LinearKintoneSync, () => {
       await expect(invalidLks.handle(updateIssueForLabel)).rejects.toThrow(
         "fieldCodeOfPrimaryKey is invalid: invalid"
       );
+    });
+    test("エラーを吐き出す", async () => {
+      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
+        message: "エラーテスト",
+        id: "123456",
+        code: "ErrorCode",
+      });
+      await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
+        "[520] [ErrorCode] エラーテスト (123456)"
+      );
+    });
+    test("headersの中身が空", async () => {
+      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
+        message: "エラーテスト",
+        id: "123456",
+        code: "ErrorCode",
+      });
+      try {
+        await lks.handle(updateIssueForLabel);
+      } catch (e) {
+        expect(e.headers).toEqual({});
+      }
     });
   });
 
@@ -221,31 +243,6 @@ describe(LinearKintoneSync, () => {
     };
 
     expect(actual).toEqual(expected);
-  });
-
-  describe("#handle error", () => {
-    test("エラーを吐き出す", async () => {
-      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
-        message: "エラーテスト",
-        id: "123456",
-        code: "ErrorCode",
-      });
-      await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
-        "[520] [ErrorCode] エラーテスト (123456)"
-      );
-    });
-    test("headersの中身が空", async () => {
-      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
-        message: "エラーテスト",
-        id: "123456",
-        code: "ErrorCode",
-      });
-      try {
-        await lks.handle(updateIssueForLabel);
-      } catch (e) {
-        expect(e.headers).toEqual({});
-      }
-    });
   });
 
   test("#addCustomeCallback", async () => {
