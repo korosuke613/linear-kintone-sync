@@ -223,7 +223,7 @@ describe(LinearKintoneSync, () => {
     expect(actual).toEqual(expected);
   });
 
-  describe("#handle error", async () => {
+  describe("#handle error", () => {
     test("エラーを吐き出す", async () => {
       nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
         message: "エラーテスト",
