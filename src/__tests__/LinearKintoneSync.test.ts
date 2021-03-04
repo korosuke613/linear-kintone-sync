@@ -3,6 +3,7 @@ import { KintoneApps, LinearKintoneSync } from "../index";
 import { createIssue } from "./data/createIssue";
 import { CreateIssueWebhook } from "linear-webhook";
 import { updateIssueForLabel } from "./data/updateIssue";
+import { removeIssue } from "./data/removeIssue";
 
 const dummyKintoneApps: KintoneApps = {
   baseUrl: "https://korosuke613.cybozu.com",
@@ -133,6 +134,67 @@ describe(LinearKintoneSync, () => {
         },
         updatedAt: {
           value: "2021-01-30T11:24:17.747Z",
+        },
+      },
+    };
+
+    expect(actual).toEqual(expected);
+  });
+
+  test("#handle RemoveIssue", async () => {
+    nock(dummyKintoneApps.baseUrl)
+      .put("/k/v1/record.json")
+      .reply(200, { revision: 1 });
+
+    const actual = await lks.handle(removeIssue);
+    const expected = {
+      app: "0",
+      updateKey: {
+        field: "id",
+        value: "ac36bcc2-xxxx-xxxx-xxxx-3e13107f89be",
+      },
+      record: {
+        archivedAt: {
+          value: "2021-01-30T11:48:48.707Z",
+        },
+        boardOrder: {
+          value: "-40.42",
+        },
+        createdAt: {
+          value: "2021-01-30T11:33:45.487Z",
+        },
+        labelIds: {
+          value: "",
+        },
+        subscriberIds: {
+          value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+        },
+        previousIdentifiers: {
+          value: "",
+        },
+        creatorId: {
+          value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+        },
+        number: {
+          value: "12",
+        },
+        priority: {
+          value: "0",
+        },
+        priorityLabel: {
+          value: "No priority",
+        },
+        stateId: {
+          value: "c02edc3a-xxxx-xxxx-xxxx-85c349766a13",
+        },
+        teamId: {
+          value: "eeaa0cbd-xxxx-xxxx-xxxx-1c701c3485f1",
+        },
+        title: {
+          value: "webhook test 2",
+        },
+        updatedAt: {
+          value: "2021-01-30T11:33:45.487Z",
         },
       },
     };
