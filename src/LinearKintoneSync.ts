@@ -1,10 +1,14 @@
 import {
   CreateIssueWebhook,
+  UpdateIssueWebhook,
   Webhook,
   WebhookEventsUnion,
   WebhookHandler,
 } from "linear-webhook";
-import { KintoneRestAPIClient } from "@kintone/rest-api-client";
+import {
+  KintoneRestAPIClient,
+  KintoneRestAPIError,
+} from "@kintone/rest-api-client";
 import { getKintoneAppsFromEnv, KintoneApps, RecordForParameter } from "./libs";
 
 export class LinearKintoneSync {
@@ -19,11 +23,21 @@ export class LinearKintoneSync {
   }
 
   async handle(webhook: Webhook) {
-    return this.handler.execCallback(webhook);
+    let result;
+    try {
+      result = this.handler.execCallback(webhook);
+    } catch (e) {
+      if (e instanceof KintoneRestAPIError) {
+        e.headers = {};
+      }
+      throw e;
+    }
+    return result;
   }
 
   private addCallbacks() {
     this.addCallbackCreateIssue();
+    this.addCallbackUpdateIssue();
   }
 
   private getKintoneClient() {
@@ -35,31 +49,67 @@ export class LinearKintoneSync {
     });
   }
 
+  private static generateKintoneRecordParam(data: Record<string, any>) {
+    const record: RecordForParameter = {};
+
+    for (const [key, value] of Object.entries(data)) {
+      const stringValue = value.toString();
+      if (typeof value === "object" && stringValue === "[object Object]") {
+        continue;
+      }
+      record[key] = {
+        value: stringValue,
+      };
+    }
+    return record;
+  }
+
   addCallbackCreateIssue() {
     const callback = async (webhook: CreateIssueWebhook) => {
       const client = this.getKintoneClient();
       const data = webhook.data;
-      const record: RecordForParameter = {};
-
-      for (const [key, value] of Object.entries(data)) {
-        record[key] = {
-          value: value.toString(),
-        };
-      }
-      const addRecordParam = {
+      const record = LinearKintoneSync.generateKintoneRecordParam(data);
+      const param = {
         app: this.apps.issue.id,
         record: record,
       };
-      console.debug(JSON.stringify(addRecordParam, null, 2));
+      console.debug(JSON.stringify(param, null, 2));
 
-      await client.record.addRecord(addRecordParam).then((event) => {
-        console.info("createCard\n" + event.id, event.revision);
+      await client.record.addRecord(param).then((event) => {
+        console.info("createIssue\n" + event.id, event.revision);
       });
 
-      return addRecordParam;
+      return param;
     };
 
     this.handler.addCallback("CreateIssueWebhook", callback);
+  }
+
+  addCallbackUpdateIssue() {
+    const callback = async (webhook: UpdateIssueWebhook) => {
+      const client = this.getKintoneClient();
+      const data = webhook.data;
+      const record = LinearKintoneSync.generateKintoneRecordParam(data);
+      delete record[this.apps.issue.fieldCodeOfPrimaryKey];
+
+      const param = {
+        app: this.apps.issue.id,
+        updateKey: {
+          field: this.apps.issue.fieldCodeOfPrimaryKey,
+          value: data.id,
+        },
+        record: record,
+      };
+      console.debug(JSON.stringify(param, null, 2));
+
+      await client.record.updateRecord(param).then((event) => {
+        console.info("updateIssue\n", event.revision);
+      });
+
+      return param;
+    };
+
+    this.handler.addCallback("UpdateIssueWebhook", callback);
   }
 
   addCustomCallback<T extends Webhook>(

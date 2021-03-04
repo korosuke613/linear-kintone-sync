@@ -3,6 +3,7 @@ import { Env } from "@humanwhocodes/env";
 export interface KintoneAppConfig {
   id: string;
   token: string;
+  fieldCodeOfPrimaryKey: string;
 }
 
 export interface KintoneApps {
@@ -23,6 +24,7 @@ export const getKintoneAppsFromEnv = (): KintoneApps => {
   const issue: KintoneAppConfig = {
     id: env.require("KINTONE_ISSUE_APP_ID"),
     token: env.require("KINTONE_ISSUE_APP_TOKEN"),
+    fieldCodeOfPrimaryKey: "id",
   };
 
   return {

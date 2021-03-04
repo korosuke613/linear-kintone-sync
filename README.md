@@ -7,7 +7,7 @@ Synchronize Linear.app and kintone.
 All webhook types are [here](https://github.com/korosuke613/linear-webhook/blob/main/src/Interfaces.ts#L298).
 
 - [x] CreateIssueWebhook 
-- [ ] UpdateIssueWebhook
+- [x] UpdateIssueWebhook
 - [ ] RemoveIssueWebhook
 - [ ] CreateCommentWebhook
 - [ ] UpdateCommentWebhook

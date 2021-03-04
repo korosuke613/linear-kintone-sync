@@ -11,6 +11,7 @@ test("#getKintoneAppsFromEnv", () => {
     issue: {
       id: "b",
       token: "c",
+      fieldCodeOfPrimaryKey: "id",
     },
   };
 
