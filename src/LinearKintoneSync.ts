@@ -36,8 +36,9 @@ export class LinearKintoneSync {
   }
 
   private addCallbacks() {
-    this.addCallbackCreateIssue();
-    this.addCallbackUpdateIssue();
+    this.handler.addCallback("CreateIssueWebhook", this.addIssue);
+    this.handler.addCallback("UpdateIssueWebhook", this.updateIssue);
+    this.handler.addCallback("RemoveIssueWebhook", this.updateIssue);
   }
 
   private getKintoneClient() {
@@ -64,53 +65,45 @@ export class LinearKintoneSync {
     return record;
   }
 
-  addCallbackCreateIssue() {
-    const callback = async (webhook: CreateIssueWebhook) => {
-      const client = this.getKintoneClient();
-      const data = webhook.data;
-      const record = LinearKintoneSync.generateKintoneRecordParam(data);
-      const param = {
-        app: this.apps.issue.id,
-        record: record,
-      };
-      console.debug(JSON.stringify(param, null, 2));
-
-      await client.record.addRecord(param).then((event) => {
-        console.info("createIssue\n" + event.id, event.revision);
-      });
-
-      return param;
+  private addIssue = async (webhook: CreateIssueWebhook) => {
+    const client = this.getKintoneClient();
+    const data = webhook.data;
+    const record = LinearKintoneSync.generateKintoneRecordParam(data);
+    const param = {
+      app: this.apps.issue.id,
+      record: record,
     };
+    console.debug(JSON.stringify(param, null, 2));
 
-    this.handler.addCallback("CreateIssueWebhook", callback);
-  }
+    await client.record.addRecord(param).then((event) => {
+      console.info("createIssue\n" + event.id, event.revision);
+    });
 
-  addCallbackUpdateIssue() {
-    const callback = async (webhook: UpdateIssueWebhook) => {
-      const client = this.getKintoneClient();
-      const data = webhook.data;
-      const record = LinearKintoneSync.generateKintoneRecordParam(data);
-      delete record[this.apps.issue.fieldCodeOfPrimaryKey];
+    return param;
+  };
 
-      const param = {
-        app: this.apps.issue.id,
-        updateKey: {
-          field: this.apps.issue.fieldCodeOfPrimaryKey,
-          value: data.id,
-        },
-        record: record,
-      };
-      console.debug(JSON.stringify(param, null, 2));
+  private updateIssue = async (webhook: UpdateIssueWebhook) => {
+    const client = this.getKintoneClient();
+    const data = webhook.data;
+    const record = LinearKintoneSync.generateKintoneRecordParam(data);
+    delete record[this.apps.issue.fieldCodeOfPrimaryKey];
 
-      await client.record.updateRecord(param).then((event) => {
-        console.info("updateIssue\n", event.revision);
-      });
-
-      return param;
+    const param = {
+      app: this.apps.issue.id,
+      updateKey: {
+        field: this.apps.issue.fieldCodeOfPrimaryKey,
+        value: data.id,
+      },
+      record: record,
     };
+    console.debug(JSON.stringify(param, null, 2));
 
-    this.handler.addCallback("UpdateIssueWebhook", callback);
-  }
+    await client.record.updateRecord(param).then((event) => {
+      console.info("updateIssue\n", event.revision);
+    });
+
+    return param;
+  };
 
   addCustomCallback<T extends Webhook>(
     webhookEvent: WebhookEventsUnion,
