@@ -35,9 +35,9 @@ export const updateIssue = async (
   const updateKeyValue = data[apps.issue.fieldCodeOfPrimaryKey] as
     | string
     | number;
-  if (data === undefined) {
+  if (updateKeyValue === undefined) {
     throw new Error(
-      `fieldCode is invalid. ${apps.issue.fieldCodeOfPrimaryKey}`
+      `fieldCodeOfPrimaryKey is invalid: ${apps.issue.fieldCodeOfPrimaryKey}`
     );
   }
   const param = {
