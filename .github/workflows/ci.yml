@@ -23,19 +23,19 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - run: npm ci
+      - run: yarn --frozen-lockfile
       - uses: reviewdog/action-eslint@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           eslint_flags: "./**/*.{ts,js}"
       - name: Run eslint
-        run: npm run lint
+        run: yarn workspace linear-kintone-sync lint
 
   test:
     name: test
@@ -51,18 +51,19 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - run: npm ci
+      - run: cd packages/lks-core
+      - run: yarn --frozen-lockfile
       - name: Run Jest
-        run: npm run test:coverage
+        run: yarn workspace linear-kintone-sync test:coverage
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          directory: ./coverage/ # optional
+          directory: ./packages/lks-core/coverage/ # optional
           fail_ci_if_error: true # optional2 (default = false)
 
   pack:
@@ -79,13 +80,13 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - run: npm ci
+      - run: yarn --frozen-lockfile
       - name: Run build
-        run: npm run build
+        run: yarn workspace linear-kintone-sync build
       - name: Run pack
-        run: npm pack
+        run: yarn workspace linear-kintone-sync exec npm pack
