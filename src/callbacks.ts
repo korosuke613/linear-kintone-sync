@@ -1,11 +1,18 @@
-import { CreateIssueWebhook, UpdateIssueWebhook } from "linear-webhook";
+import { UpdateIssueWebhook, Webhook } from "linear-webhook";
 import { generateKintoneRecordParam, getKintoneClient } from "./libs";
 import { KintoneApps } from "./types";
 
-export const addIssue = async (
-  webhook: CreateIssueWebhook,
-  apps: KintoneApps
-) => {
+const getKeyValue = (data: Webhook["data"], apps: KintoneApps) => {
+  const keyValue = data[apps.issue.fieldCodeOfPrimaryKey] as string | number;
+  if (keyValue === undefined) {
+    throw new Error(
+      `fieldCodeOfPrimaryKey is invalid: ${apps.issue.fieldCodeOfPrimaryKey}`
+    );
+  }
+  return keyValue;
+};
+
+export const addIssue = async (webhook: Webhook, apps: KintoneApps) => {
   const client = getKintoneClient(apps, "Issue");
   const data = webhook.data;
 
@@ -23,6 +30,26 @@ export const addIssue = async (
   return param;
 };
 
+const getIssue = async (webhook: Webhook, apps: KintoneApps) => {
+  const client = getKintoneClient(apps, "Issue");
+  const data = webhook.data;
+
+  const issueKeyValue = getKeyValue(data, apps);
+
+  const param = {
+    app: apps.issue.id,
+    query: `${apps.issue.fieldCodeOfPrimaryKey} = ${issueKeyValue}`,
+  };
+
+  const { records } = await client.record.getRecords(param);
+  if (records.length > 1) {
+    // レコードが複数返る場合、ユニークなフィールドでないのでエラーを出す
+    throw new Error(`${apps.issue.fieldCodeOfPrimaryKey} is not uniq field`);
+  }
+
+  return records[0];
+};
+
 export const updateIssue = async (
   webhook: UpdateIssueWebhook,
   apps: KintoneApps
@@ -30,16 +57,20 @@ export const updateIssue = async (
   const client = getKintoneClient(apps, "Issue");
   const data = webhook.data;
 
+  const existsIssue = await getIssue(webhook, apps);
+  if (existsIssue === undefined) {
+    console.info(
+      `Create Issue, ${apps.issue.fieldCodeOfPrimaryKey}: ${
+        data[apps.issue.fieldCodeOfPrimaryKey]
+      }`
+    );
+    await addIssue(webhook, apps);
+  }
+
   const record = generateKintoneRecordParam(data);
   delete record[apps.issue.fieldCodeOfPrimaryKey];
-  const updateKeyValue = data[apps.issue.fieldCodeOfPrimaryKey] as
-    | string
-    | number;
-  if (updateKeyValue === undefined) {
-    throw new Error(
-      `fieldCodeOfPrimaryKey is invalid: ${apps.issue.fieldCodeOfPrimaryKey}`
-    );
-  }
+  const updateKeyValue = getKeyValue(data, apps);
+
   const param = {
     app: apps.issue.id,
     updateKey: {
