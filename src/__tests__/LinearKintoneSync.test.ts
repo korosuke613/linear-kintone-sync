@@ -17,6 +17,7 @@ const dummyKintoneApps: KintoneApps = {
 let lks: LinearKintoneSync;
 beforeEach(() => {
   lks = new LinearKintoneSync(dummyKintoneApps);
+  nock.cleanAll();
 });
 
 describe(LinearKintoneSync, () => {
@@ -80,6 +81,11 @@ describe(LinearKintoneSync, () => {
   describe("#handle UpdateIssue", () => {
     test("正常系", async () => {
       nock(dummyKintoneApps.baseUrl)
+        .get(
+          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+        )
+        .reply(200, { records: [{ hoge: "hoge" }] });
+      nock(dummyKintoneApps.baseUrl)
         .put("/k/v1/record.json")
         .reply(200, { revision: 1 });
 
@@ -142,7 +148,7 @@ describe(LinearKintoneSync, () => {
       expect(actual).toEqual(expected);
     });
 
-    test("異常系", async () => {
+    test("存在しない fieldCodeOfPrimaryKey を使うとエラーになる", async () => {
       const invalidKintoneApps: KintoneApps = {
         baseUrl: "https://invalidKorosuke613.cybozu.com",
         issue: {
@@ -151,40 +157,78 @@ describe(LinearKintoneSync, () => {
           fieldCodeOfPrimaryKey: "invalid",
         },
       };
-      nock("https://invalidKorosuke613.cybozu.com")
-        .put("/k/v1/record.json")
-        .reply(200, { revision: 1 });
       const invalidLks = new LinearKintoneSync(invalidKintoneApps);
 
       await expect(invalidLks.handle(updateIssueForLabel)).rejects.toThrow(
         "fieldCodeOfPrimaryKey is invalid: invalid"
       );
     });
-    test("エラーを吐き出す", async () => {
-      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
-        message: "エラーテスト",
-        id: "123456",
-        code: "ErrorCode",
-      });
+    test("kintone rest apiのエラーをそのままthrowする", async () => {
+      nock(dummyKintoneApps.baseUrl)
+        .get(
+          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+        )
+        .reply(520, {
+          message: "エラーテスト",
+          id: "123456",
+          code: "ErrorCode",
+        });
       await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
         "[520] [ErrorCode] エラーテスト (123456)"
       );
     });
-    test("headersの中身が空", async () => {
-      nock(dummyKintoneApps.baseUrl).put("/k/v1/record.json").reply(520, {
-        message: "エラーテスト",
-        id: "123456",
-        code: "ErrorCode",
-      });
+
+    test("kintone rest apiのエラーをthrowした時にheadersの中身が空である", async () => {
+      nock(dummyKintoneApps.baseUrl)
+        .get(
+          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+        )
+        .reply(520, {
+          message: "エラーテスト",
+          id: "123456",
+          code: "ErrorCode",
+        });
       try {
         await lks.handle(updateIssueForLabel);
       } catch (e) {
         expect(e.headers).toEqual({});
       }
     });
+
+    test("issueレコードの存在確認時に複数のレコードが返ってきたらエラーを出す", async () => {
+      nock(dummyKintoneApps.baseUrl)
+        .get(
+          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+        )
+        .reply(200, { records: [{ hoge: "hoge" }, { fuga: "fuga" }] });
+      await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
+        "id is not uniq field"
+      );
+    });
+
+    test("issueのレコードがない場合、addIssueを呼び出す", async () => {
+      nock(dummyKintoneApps.baseUrl)
+        .get(
+          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+        )
+        .reply(200, { records: [] });
+      nock(dummyKintoneApps.baseUrl)
+        .post("/k/v1/record.json")
+        .reply(200, { id: 0, revision: 0 });
+      nock(dummyKintoneApps.baseUrl)
+        .put("/k/v1/record.json")
+        .reply(200, { revision: 1 });
+
+      await lks.handle(updateIssueForLabel);
+    });
   });
 
   test("#handle RemoveIssue", async () => {
+    nock(dummyKintoneApps.baseUrl)
+      .get(
+        "/k/v1/records.json?app=0&query=id%20%3D%20ac36bcc2-xxxx-xxxx-xxxx-3e13107f89be"
+      )
+      .reply(200, { records: [{ hoge: "hoge" }] });
     nock(dummyKintoneApps.baseUrl)
       .put("/k/v1/record.json")
       .reply(200, { revision: 1 });
