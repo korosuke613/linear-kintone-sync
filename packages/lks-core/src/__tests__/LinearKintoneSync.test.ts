@@ -1,3 +1,4 @@
+// eslint-disable-next-line node/no-extraneous-import
 import nock from "nock";
 import { KintoneApps, LinearKintoneSync } from "../index";
 import { createIssue } from "./data/createIssue";

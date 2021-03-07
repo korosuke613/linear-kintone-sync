@@ -1,0 +1,40 @@
+{
+  "name": "linear-kintone-sync",
+  "version": "0.0.0",
+  "description": "Synchronize Linear.app and kintone",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm-run-all -l -s clean -p build:*",
+    "build:compile": "run-p compile",
+    "compile": "run-p -l compile:*",
+    "compile:cjs": "tsc",
+    "clean": "rimraf lib",
+    "prerelease": "npm-run-all -p lint test build",
+    "lint": "eslint --max-warnings 0 'src/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts'",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/korosuke613/linear-kintone-sync.git"
+  },
+  "files": [
+    "lib",
+    "!**/__tests__/**"
+  ],
+  "keywords": [],
+  "author": "Futa Hirakoba <korosuke613613@gmail.com> (https://korosuke613.github.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/korosuke613/linear-kintone-sync/issues"
+  },
+  "homepage": "https://github.com/korosuke613/linear-kintone-sync",
+  "devDependencies": {
+  },
+  "dependencies": {
+    "@humanwhocodes/env": "2.1.3",
+    "@kintone/rest-api-client": "^1.10.0",
+    "linear-webhook": "^0.3.0"
+  }
+}
