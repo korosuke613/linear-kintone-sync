@@ -69,7 +69,7 @@ export const updateIssue = async (
         data[apps.issue.fieldCodeOfPrimaryKey]
       }`
     );
-    await addIssue(webhook, apps);
+    return addIssue(webhook, apps);
   }
 
   const record = generateKintoneRecordParam(data);
@@ -124,21 +124,21 @@ export const updateProject = async (
   const existsProject = await getRecord(webhook, apps, "project");
   if (existsProject === undefined) {
     console.info(
-      `Create Issue, ${apps.issue.fieldCodeOfPrimaryKey}: ${
-        data[apps.issue.fieldCodeOfPrimaryKey]
+      `Create Project, ${apps.project.fieldCodeOfPrimaryKey}: ${
+        data[apps.project.fieldCodeOfPrimaryKey]
       }`
     );
-    await addIssue(webhook, apps);
+    return addProject(webhook, apps);
   }
 
   const record = generateKintoneRecordParam(data);
-  delete record[apps.issue.fieldCodeOfPrimaryKey];
+  delete record[apps.project.fieldCodeOfPrimaryKey];
   const updateKeyValue = getKeyValue(data, apps);
 
   const param = {
-    app: apps.issue.id,
+    app: apps.project.id,
     updateKey: {
-      field: apps.issue.fieldCodeOfPrimaryKey,
+      field: apps.project.fieldCodeOfPrimaryKey,
       value: updateKeyValue,
     },
     record: record,
@@ -146,7 +146,7 @@ export const updateProject = async (
   console.debug(JSON.stringify(param, null, 2));
 
   await client.record.updateRecord(param).then((event) => {
-    console.info("updateIssue\n", event.revision);
+    console.info("updateProject\n", event.revision);
   });
 
   return param;
