@@ -32,10 +32,10 @@ export const getKintoneAppsFromEnv = (): KintoneApps => {
 export const getKintoneClient = (apps: KintoneApps, type: KintoneAppTypes) => {
   let apiToken = "";
   switch (type) {
-    case "Issue":
+    case "issue":
       apiToken = apps.issue.token;
       break;
-    case "Project":
+    case "project":
       apiToken = apps.project.token;
   }
 
