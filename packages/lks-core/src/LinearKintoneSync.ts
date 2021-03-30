@@ -34,6 +34,7 @@ export class LinearKintoneSync {
     this.handler.addCallback("RemoveIssueWebhook", updateIssue);
     this.handler.addCallback("CreateProjectWebhook", addProject);
     this.handler.addCallback("UpdateProjectWebhook", updateProject);
+    this.handler.addCallback("RemoveProjectWebhook", updateProject);
   }
 
   addCustomCallback<T extends Webhook>(
