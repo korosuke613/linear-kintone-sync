@@ -30,8 +30,7 @@
     "url": "https://github.com/korosuke613/linear-kintone-sync/issues"
   },
   "homepage": "https://github.com/korosuke613/linear-kintone-sync/packages/lks-core",
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "@humanwhocodes/env": "2.1.3",
     "@kintone/rest-api-client": "^1.10.0",
