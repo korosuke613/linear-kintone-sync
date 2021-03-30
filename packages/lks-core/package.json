@@ -29,7 +29,7 @@
   "bugs": {
     "url": "https://github.com/korosuke613/linear-kintone-sync/issues"
   },
-  "homepage": "https://github.com/korosuke613/linear-kintone-sync",
+  "homepage": "https://github.com/korosuke613/linear-kintone-sync/packages/lks-core",
   "devDependencies": {
   },
   "dependencies": {

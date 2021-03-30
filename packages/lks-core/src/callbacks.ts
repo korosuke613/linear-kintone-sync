@@ -38,9 +38,10 @@ const getIssue = async (webhook: Webhook, apps: KintoneApps) => {
 
   const param = {
     app: apps.issue.id,
-    query: `${apps.issue.fieldCodeOfPrimaryKey} = ${issueKeyValue}`,
+    query: `${apps.issue.fieldCodeOfPrimaryKey} = "${issueKeyValue}"`,
   };
 
+  console.debug(JSON.stringify(param, null, 2));
   const { records } = await client.record.getRecords(param);
   if (records.length > 1) {
     // レコードが複数返る場合、ユニークなフィールドでないのでエラーを出す
