@@ -14,6 +14,11 @@ test("#getKintoneAppsFromEnv", () => {
       token: "c",
       fieldCodeOfPrimaryKey: "id",
     },
+    project: {
+      id: "b",
+      token: "c",
+      fieldCodeOfPrimaryKey: "id",
+    },
   };
 
   expect(actual).toEqual(expected);

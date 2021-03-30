@@ -88,3 +88,24 @@ export const updateIssue = async (
 
   return param;
 };
+
+export const addProject = async (
+  webhook: UpdateIssueWebhook,
+  apps: KintoneApps
+) => {
+  const client = getKintoneClient(apps, "Project");
+  const data = webhook.data;
+
+  const record = generateKintoneRecordParam(data);
+  const param = {
+    app: apps.project.id,
+    record: record,
+  };
+  console.debug(JSON.stringify(param, null, 2));
+
+  await client.record.addRecord(param).then((event) => {
+    console.info("createProject\n" + event.id, event.revision);
+  });
+
+  return param;
+};

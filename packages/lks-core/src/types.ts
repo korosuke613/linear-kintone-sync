@@ -7,7 +7,10 @@ export interface KintoneAppConfig {
 export interface KintoneApps {
   baseUrl: string;
   issue: KintoneAppConfig;
+  project: KintoneAppConfig;
 }
+
+export type KintoneAppTypes = "Issue" | "Project";
 
 export type RecordForParameter = {
   [fieldCode: string]: {

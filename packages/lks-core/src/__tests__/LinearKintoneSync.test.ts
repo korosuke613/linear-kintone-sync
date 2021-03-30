@@ -13,6 +13,11 @@ const dummyKintoneApps: KintoneApps = {
     token: "token",
     fieldCodeOfPrimaryKey: "id",
   },
+  project: {
+    id: "0",
+    token: "token",
+    fieldCodeOfPrimaryKey: "id",
+  },
 };
 
 let lks: LinearKintoneSync;
@@ -153,6 +158,11 @@ describe(LinearKintoneSync, () => {
       const invalidKintoneApps: KintoneApps = {
         baseUrl: "https://invalidKorosuke613.cybozu.com",
         issue: {
+          id: "0",
+          token: "token",
+          fieldCodeOfPrimaryKey: "invalid",
+        },
+        project: {
           id: "0",
           token: "token",
           fieldCodeOfPrimaryKey: "invalid",
