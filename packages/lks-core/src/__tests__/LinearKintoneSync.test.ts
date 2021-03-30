@@ -78,6 +78,9 @@ describe(LinearKintoneSync, () => {
         updatedAt: {
           value: "2021-01-30T11:19:39.427Z",
         },
+        Url: {
+          value: "https://linear.app/korosuke613/issue/KOR-11/webhook-test",
+        },
       },
     };
 
@@ -147,6 +150,9 @@ describe(LinearKintoneSync, () => {
           },
           updatedAt: {
             value: "2021-01-30T11:24:17.747Z",
+          },
+          Url: {
+            value: "https://linear.app/korosuke613/issue/KOR-11/webhook-test",
           },
         },
       };

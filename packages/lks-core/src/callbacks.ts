@@ -40,8 +40,12 @@ export const addIssue = async (webhook: Webhook, apps: KintoneApps) => {
       data.project as { id: string; name: string }
     );
   }
-  const record = generateKintoneRecordParam(data);
 
+  if ("url" in webhook) {
+    data.Url = webhook.url;
+  }
+
+  const record = generateKintoneRecordParam(data);
   const param = {
     app: apps.issue.id,
     record: record,
@@ -126,6 +130,10 @@ export const updateIssue = async (
     return addIssue(webhook, apps);
   }
 
+  if ("url" in webhook) {
+    data.Url = webhook.url;
+  }
+
   const record = generateKintoneRecordParam(data);
   delete record[apps.issue.fieldCodeOfPrimaryKey];
   const updateKeyValue = getKeyValue(data, apps, "issue");
@@ -154,6 +162,10 @@ export const addProject = async (
   const client = getKintoneClient(apps, "project");
   const data = webhook.data;
 
+  if ("url" in webhook) {
+    data.Url = webhook.url;
+  }
+
   return addRecord(client, apps, "project", data, "createProject");
 };
 
@@ -181,6 +193,10 @@ export const updateProject = async (
       }`
     );
     return addProject(webhook, apps);
+  }
+
+  if ("url" in webhook) {
+    data.Url = webhook.url;
   }
 
   const record = generateKintoneRecordParam(data);
