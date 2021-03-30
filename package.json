@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Synchronize Linear.app and kintone.",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "private": true,
   "devDependencies": {
