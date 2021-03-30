@@ -1,7 +1,9 @@
 /* eslint-env node */
 
 const path = require("path");
+// eslint-disable-next-line node/no-unpublished-require
 const slsw = require("serverless-webpack");
+// eslint-disable-next-line node/no-unpublished-require
 const nodeExternals = require("webpack-node-externals");
 
 module.exports = {
