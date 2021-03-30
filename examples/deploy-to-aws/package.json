@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "Synchronize Linear.app and kintone",
   "scripts": {
-    "deploy:dev": "sls deploy"
+    "deploy:dev": "sls deploy",
+    "lint": "eslint --max-warnings 0 '*.ts'"
   },
   "repository": {
     "type": "git",
