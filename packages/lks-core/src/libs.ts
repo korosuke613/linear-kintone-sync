@@ -61,3 +61,26 @@ export const generateKintoneRecordParam = (data: Record<string, any>) => {
   }
   return record;
 };
+
+export const addRecord = async (
+  client: KintoneRestAPIClient,
+  apps: KintoneApps,
+  appType: KintoneAppTypes,
+  data: Record<string, unknown>,
+  name: string
+) => {
+  const record = generateKintoneRecordParam(data);
+  const param = {
+    app: apps[appType].id,
+    record: record,
+  };
+  console.debug(JSON.stringify(param, null, 2));
+
+  let result = { id: "unknown", revision: "unknown" };
+  await client.record.addRecord(param).then((event) => {
+    console.info(`${name}\n` + event.id, event.revision);
+    result = event;
+  });
+
+  return { param, result };
+};
