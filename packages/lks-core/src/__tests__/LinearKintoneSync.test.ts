@@ -83,7 +83,7 @@ describe(LinearKintoneSync, () => {
     test("正常系", async () => {
       nock(dummyKintoneApps.baseUrl)
         .get(
-          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
         )
         .reply(200, { records: [{ hoge: "hoge" }] });
       nock(dummyKintoneApps.baseUrl)
@@ -167,7 +167,7 @@ describe(LinearKintoneSync, () => {
     test("kintone rest apiのエラーをそのままthrowする", async () => {
       nock(dummyKintoneApps.baseUrl)
         .get(
-          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
         )
         .reply(520, {
           message: "エラーテスト",
@@ -182,7 +182,7 @@ describe(LinearKintoneSync, () => {
     test("kintone rest apiのエラーをthrowした時にheadersの中身が空である", async () => {
       nock(dummyKintoneApps.baseUrl)
         .get(
-          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
         )
         .reply(520, {
           message: "エラーテスト",
@@ -199,7 +199,7 @@ describe(LinearKintoneSync, () => {
     test("issueレコードの存在確認時に複数のレコードが返ってきたらエラーを出す", async () => {
       nock(dummyKintoneApps.baseUrl)
         .get(
-          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
         )
         .reply(200, { records: [{ hoge: "hoge" }, { fuga: "fuga" }] });
       await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
@@ -210,7 +210,7 @@ describe(LinearKintoneSync, () => {
     test("issueのレコードがない場合、addIssueを呼び出す", async () => {
       nock(dummyKintoneApps.baseUrl)
         .get(
-          "/k/v1/records.json?app=0&query=id%20%3D%20236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"
+          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
         )
         .reply(200, { records: [] });
       nock(dummyKintoneApps.baseUrl)
@@ -227,7 +227,7 @@ describe(LinearKintoneSync, () => {
   test("#handle RemoveIssue", async () => {
     nock(dummyKintoneApps.baseUrl)
       .get(
-        "/k/v1/records.json?app=0&query=id%20%3D%20ac36bcc2-xxxx-xxxx-xxxx-3e13107f89be"
+        '/k/v1/records.json?app=0&query=id%20%3D%20"ac36bcc2-xxxx-xxxx-xxxx-3e13107f89be"'
       )
       .reply(200, { records: [{ hoge: "hoge" }] });
     nock(dummyKintoneApps.baseUrl)
