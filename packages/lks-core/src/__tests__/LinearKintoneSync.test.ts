@@ -11,7 +11,7 @@ const dummyKintoneApps: KintoneApps = {
   issue: {
     id: "0",
     token: "token",
-    fieldCodeOfPrimaryKey: "id",
+    fieldCodeOfPrimaryKey: "$id",
   },
   project: {
     id: "0",
@@ -29,11 +29,23 @@ beforeEach(() => {
 describe(LinearKintoneSync, () => {
   test("#handle CreateIssue", async () => {
     nock(dummyKintoneApps.baseUrl)
+      .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2270%22")
+      .once()
+      .reply(200, { records: [] });
+    nock(dummyKintoneApps.baseUrl)
       .post("/k/v1/record.json")
       .reply(200, { id: 0, revision: 0 });
+    nock(dummyKintoneApps.baseUrl)
+      .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2270%22")
+      .once()
+      .reply(200, { records: [{ id: { value: "" } }] });
+    nock(dummyKintoneApps.baseUrl)
+      .put("/k/v1/record.json")
+      .reply(200, { revision: 1 });
 
     const actual = await lks.handle(createIssue);
     const expected = {
+      id: 70,
       app: "0",
       record: {
         boardOrder: {
@@ -52,7 +64,7 @@ describe(LinearKintoneSync, () => {
           value: "",
         },
         number: {
-          value: "11",
+          value: "70",
         },
         previousIdentifiers: {
           value: "",
@@ -90,9 +102,7 @@ describe(LinearKintoneSync, () => {
   describe("#handle UpdateIssue", () => {
     test("正常系", async () => {
       nock(dummyKintoneApps.baseUrl)
-        .get(
-          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
-        )
+        .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2211%22")
         .reply(200, { records: [{ hoge: "hoge" }] });
       nock(dummyKintoneApps.baseUrl)
         .put("/k/v1/record.json")
@@ -101,11 +111,11 @@ describe(LinearKintoneSync, () => {
       const actual = await lks.handle(updateIssueForLabel);
       const expected = {
         app: "0",
-        updateKey: {
-          field: "id",
-          value: "236e0fe8-xxxx-xxxx-xxxx-b2df06e33810",
-        },
+        id: 11,
         record: {
+          id: {
+            value: "236e0fe8-xxxx-xxxx-xxxx-b2df06e33810",
+          },
           assigneeId: {
             value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
           },
@@ -160,7 +170,7 @@ describe(LinearKintoneSync, () => {
       expect(actual).toEqual(expected);
     });
 
-    test("存在しない fieldCodeOfPrimaryKey を使うとエラーになる", async () => {
+    test("issue の fieldCodeOfPrimaryKey で $id を使わないとエラーになる", async () => {
       const invalidKintoneApps: KintoneApps = {
         baseUrl: "https://invalidKorosuke613.cybozu.com",
         issue: {
@@ -174,17 +184,15 @@ describe(LinearKintoneSync, () => {
           fieldCodeOfPrimaryKey: "invalid",
         },
       };
-      const invalidLks = new LinearKintoneSync(invalidKintoneApps);
 
-      await expect(invalidLks.handle(updateIssueForLabel)).rejects.toThrow(
-        "fieldCodeOfPrimaryKey is invalid: invalid"
-      );
+      await expect(() => {
+        new LinearKintoneSync(invalidKintoneApps);
+      }).toThrow("Needs issue.fieldCodeOfPrimaryKey is $id");
     });
+
     test("kintone rest apiのエラーをそのままthrowする", async () => {
       nock(dummyKintoneApps.baseUrl)
-        .get(
-          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
-        )
+        .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2211%22")
         .reply(520, {
           message: "エラーテスト",
           id: "123456",
@@ -197,9 +205,7 @@ describe(LinearKintoneSync, () => {
 
     test("kintone rest apiのエラーをthrowした時にheadersの中身が空である", async () => {
       nock(dummyKintoneApps.baseUrl)
-        .get(
-          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
-        )
+        .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2211%22")
         .reply(520, {
           message: "エラーテスト",
           id: "123456",
@@ -214,9 +220,7 @@ describe(LinearKintoneSync, () => {
 
     test("issueレコードの存在確認時に複数のレコードが返ってきたらエラーを出す", async () => {
       nock(dummyKintoneApps.baseUrl)
-        .get(
-          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
-        )
+        .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2211%22")
         .reply(200, { records: [{ hoge: "hoge" }, { fuga: "fuga" }] });
       await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
         "id is not uniq field"
@@ -225,13 +229,14 @@ describe(LinearKintoneSync, () => {
 
     test("issueのレコードがない場合、addIssueを呼び出す", async () => {
       nock(dummyKintoneApps.baseUrl)
-        .get(
-          '/k/v1/records.json?app=0&query=id%20%3D%20"236e0fe8-xxxx-xxxx-xxxx-b2df06e33810"'
-        )
+        .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2211%22")
         .reply(200, { records: [] });
       nock(dummyKintoneApps.baseUrl)
         .post("/k/v1/record.json")
         .reply(200, { id: 0, revision: 0 });
+      nock(dummyKintoneApps.baseUrl)
+        .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2211%22")
+        .reply(200, { records: [{ id: { value: 0 } }] });
       nock(dummyKintoneApps.baseUrl)
         .put("/k/v1/record.json")
         .reply(200, { revision: 1 });
@@ -242,9 +247,7 @@ describe(LinearKintoneSync, () => {
 
   test("#handle RemoveIssue", async () => {
     nock(dummyKintoneApps.baseUrl)
-      .get(
-        '/k/v1/records.json?app=0&query=id%20%3D%20"ac36bcc2-xxxx-xxxx-xxxx-3e13107f89be"'
-      )
+      .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2212%22")
       .reply(200, { records: [{ hoge: "hoge" }] });
     nock(dummyKintoneApps.baseUrl)
       .put("/k/v1/record.json")
@@ -253,11 +256,11 @@ describe(LinearKintoneSync, () => {
     const actual = await lks.handle(removeIssue);
     const expected = {
       app: "0",
-      updateKey: {
-        field: "id",
-        value: "ac36bcc2-xxxx-xxxx-xxxx-3e13107f89be",
-      },
+      id: 12,
       record: {
+        id: {
+          value: "ac36bcc2-xxxx-xxxx-xxxx-3e13107f89be",
+        },
         archivedAt: {
           value: "2021-01-30T11:48:48.707Z",
         },
