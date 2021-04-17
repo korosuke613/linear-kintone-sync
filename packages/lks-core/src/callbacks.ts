@@ -42,8 +42,8 @@ export const updateIssue = async (
     }
   }
 
-  if ("url" in webhook) {
-    data.Url = webhook.url;
+  if ("url" in webhook && webhook.url !== undefined) {
+    data.Url = encodeURI(webhook.url);
   }
 
   console.log("--- Exec updateRecord ---");
