@@ -7,7 +7,7 @@ export const createIssue: CreateIssueWebhook = {
     id: "236e0fe8-xxxx-xxxx-xxxx-b2df06e33810",
     createdAt: "2021-01-30T11:19:39.427Z",
     updatedAt: "2021-01-30T11:19:39.427Z",
-    number: 11,
+    number: 70,
     title: "webhook test",
     priority: 0,
     boardOrder: -86.81,

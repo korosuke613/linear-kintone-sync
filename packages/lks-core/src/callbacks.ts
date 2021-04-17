@@ -1,110 +1,15 @@
-import { UpdateIssueWebhook, Webhook } from "linear-webhook";
+import { UpdateIssueWebhook } from "linear-webhook";
 import {
+  addIssue,
+  addProjectIfProjectNotFound,
   addRecord,
   generateKintoneRecordParam,
+  getKeyValue,
   getKintoneClient,
+  getRecord,
+  sleep,
 } from "./libs";
-import { KintoneApps, KintoneAppTypes } from "./types";
-
-const getKeyValue = (
-  data: Webhook["data"],
-  apps: KintoneApps,
-  appType: KintoneAppTypes
-) => {
-  const keyValue = data[apps[appType].fieldCodeOfPrimaryKey] as string | number;
-  if (keyValue === undefined) {
-    throw new Error(
-      `fieldCodeOfPrimaryKey is invalid: ${apps[appType].fieldCodeOfPrimaryKey}`
-    );
-  }
-  return keyValue;
-};
-
-const addProjectIfProjectNotFound = async (
-  apps: KintoneApps,
-  data: { id: string; name: string }
-) => {
-  const projectRecord = await getRecordById(apps, "project", data.id);
-  if (projectRecord === undefined) {
-    await addProjectByRecord(apps, data);
-  }
-};
-
-export const addIssue = async (webhook: Webhook, apps: KintoneApps) => {
-  const client = getKintoneClient(apps, "issue");
-  const data = webhook.data;
-
-  if (data.project !== undefined) {
-    await addProjectIfProjectNotFound(
-      apps,
-      data.project as { id: string; name: string }
-    );
-  }
-
-  if ("url" in webhook) {
-    data.Url = webhook.url;
-  }
-
-  const record = generateKintoneRecordParam(data);
-  const param = {
-    app: apps.issue.id,
-    record: record,
-  };
-  console.debug(JSON.stringify(param, null, 2));
-
-  await client.record.addRecord(param).then((event) => {
-    console.info("createIssue\n" + event.id, event.revision);
-  });
-
-  return param;
-};
-
-const getRecord = async (
-  webhook: Webhook,
-  apps: KintoneApps,
-  appType: KintoneAppTypes
-) => {
-  const client = getKintoneClient(apps, appType);
-  const data = webhook.data;
-
-  const keyValue = getKeyValue(data, apps, appType);
-
-  const param = {
-    app: apps[appType].id,
-    query: `${apps[appType].fieldCodeOfPrimaryKey} = "${keyValue}"`,
-  };
-
-  console.debug(JSON.stringify(param, null, 2));
-  const { records } = await client.record.getRecords(param);
-  if (records.length > 1) {
-    // レコードが複数返る場合、ユニークなフィールドでないのでエラーを出す
-    throw new Error(`${apps.issue.fieldCodeOfPrimaryKey} is not uniq field`);
-  }
-
-  return records[0];
-};
-
-const getRecordById = async (
-  apps: KintoneApps,
-  appType: KintoneAppTypes,
-  id: string
-) => {
-  const client = getKintoneClient(apps, appType);
-
-  const param = {
-    app: apps[appType].id,
-    query: `${apps[appType].fieldCodeOfPrimaryKey} = "${id}"`,
-  };
-
-  console.debug(JSON.stringify(param, null, 2));
-  const { records } = await client.record.getRecords(param);
-  if (records.length > 1) {
-    // レコードが複数返る場合、ユニークなフィールドでないのでエラーを出す
-    throw new Error(`${apps[appType].fieldCodeOfPrimaryKey} is not uniq field`);
-  }
-
-  return records[0];
-};
+import { KintoneApps } from "./types";
 
 export const updateIssue = async (
   webhook: UpdateIssueWebhook,
@@ -114,36 +19,41 @@ export const updateIssue = async (
   const data = webhook.data;
 
   if (data.project !== undefined) {
+    console.log("--- Call addProjectIfProjectNotFound() ---");
     await addProjectIfProjectNotFound(
       apps,
       data.project as { id: string; name: string }
     );
   }
 
-  const existsIssue = await getRecord(webhook, apps, "issue");
-  if (existsIssue === undefined) {
-    console.info(
-      `Create Issue, ${apps.issue.fieldCodeOfPrimaryKey}: ${
-        data[apps.issue.fieldCodeOfPrimaryKey]
-      }`
-    );
-    return addIssue(webhook, apps);
+  for (let i = 0; i < 10; i++) {
+    console.log("--- Call getRecord() ---");
+    const existsIssue = await getRecord(webhook, apps, "issue");
+    if (existsIssue === undefined) {
+      console.info(
+        `Create Issue, ${apps.issue.fieldCodeOfPrimaryKey}: ${
+          data[apps.issue.fieldCodeOfPrimaryKey]
+        }`
+      );
+      await addIssue(webhook, apps);
+      await sleep(1000);
+    } else {
+      break;
+    }
   }
 
   if ("url" in webhook) {
     data.Url = webhook.url;
   }
 
+  console.log("--- Exec updateRecord ---");
   const record = generateKintoneRecordParam(data);
   delete record[apps.issue.fieldCodeOfPrimaryKey];
   const updateKeyValue = getKeyValue(data, apps, "issue");
 
   const param = {
     app: apps.issue.id,
-    updateKey: {
-      field: apps.issue.fieldCodeOfPrimaryKey,
-      value: updateKeyValue,
-    },
+    id: updateKeyValue,
     record: record,
   };
   console.debug(JSON.stringify(param, null, 2));
@@ -185,6 +95,7 @@ export const updateProject = async (
   const client = getKintoneClient(apps, "project");
   const data = webhook.data;
 
+  console.log("--- Call getRecord() ---");
   const existsProject = await getRecord(webhook, apps, "project");
   if (existsProject === undefined) {
     console.info(
@@ -192,6 +103,7 @@ export const updateProject = async (
         data[apps.project.fieldCodeOfPrimaryKey]
       }`
     );
+    console.log("--- Call addProject() ---");
     return addProject(webhook, apps);
   }
 
@@ -199,6 +111,7 @@ export const updateProject = async (
     data.Url = webhook.url;
   }
 
+  console.log("--- Exec updateRecord ---");
   const record = generateKintoneRecordParam(data);
   delete record[apps.project.fieldCodeOfPrimaryKey];
   const updateKeyValue = getKeyValue(data, apps, "project");
