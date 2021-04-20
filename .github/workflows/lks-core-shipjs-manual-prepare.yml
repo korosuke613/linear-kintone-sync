@@ -1,4 +1,4 @@
-name: [lks-core] Ship js Manual Prepare
+name: "[lks-core] Ship js Manual Prepare"
 on:
   issue_comment:
     types: [created]
