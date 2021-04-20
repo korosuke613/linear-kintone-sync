@@ -9,6 +9,10 @@ jobs:
       (github.event.comment.author_association == 'member' || github.event.comment.author_association == 'owner') &&
       startsWith(github.event.comment.body, '@shipjs prepare lks-core')
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/lks-core
+
     steps:
       - uses: actions/checkout@v2
         with:

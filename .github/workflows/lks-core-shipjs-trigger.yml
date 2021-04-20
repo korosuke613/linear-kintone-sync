@@ -9,6 +9,9 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'releases/v')
+    defaults:
+      run:
+        working-directory: ./packages/lks-core
     steps:
       - uses: actions/checkout@v2
         with:
@@ -35,7 +38,6 @@ jobs:
       - run: yarn workspace linear-kintone-sync prerelease
 
       - run: npx shipjs trigger
-        working-directory: ./packages/lks-core
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
