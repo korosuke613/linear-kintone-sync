@@ -12,6 +12,7 @@
     "prerelease": "npm-run-all -p lint test build",
     "lint": "eslint --max-warnings 0 'src/**/*.ts'",
     "format": "prettier --write 'src/**/*.ts'",
+    "release": "shipjs prepare",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
