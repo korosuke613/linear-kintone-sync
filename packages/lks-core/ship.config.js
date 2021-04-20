@@ -1,3 +1,6 @@
 module.exports = {
-  publishCommand: ({ defaultCommand }) => `${defaultCommand} --access public`,
+  publishCommand: ({ isYarn, tag, defaultCommand, dir }) =>
+    `${defaultCommand} --access public`,
+  installCommand: ({ isYarn }) =>
+    isYarn ? "yarn install --silent" : "npm install",
 };
