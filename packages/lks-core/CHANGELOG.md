@@ -1,3 +1,12 @@
+# [0.2.0](https://github.com/korosuke613/linear-kintone-sync/compare/v0.1.0...v0.2.0) (2021-05-07)
+
+
+### Features
+
+* enable lookup for issue ([5bc9389](https://github.com/korosuke613/linear-kintone-sync/commit/5bc938983335f7d2931588a347d3531f0469a024))
+
+
+
 # [0.1.0](https://github.com/korosuke613/linear-kintone-sync/compare/v0.0.0...v0.1.0) (2021-04-20)
 
 
