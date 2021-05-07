@@ -6,6 +6,8 @@ process.env.KINTONE_ISSUE_APP_ID = "b";
 process.env.KINTONE_ISSUE_APP_TOKEN = "c";
 process.env.KINTONE_PROJECT_APP_ID = "b";
 process.env.KINTONE_PROJECT_APP_TOKEN = "c";
+process.env.KINTONE_STATE_APP_ID = "b";
+process.env.KINTONE_STATE_APP_TOKEN = "c";
 
 test("#getKintoneAppsFromEnv", () => {
   const actual = getKintoneAppsFromEnv();
@@ -13,7 +15,7 @@ test("#getKintoneAppsFromEnv", () => {
     baseUrl: "a",
     issue: {
       id: "b",
-      token: "c",
+      token: ["c", "c", "c"],
       fieldCodeOfPrimaryKey: "$id",
     },
     project: {

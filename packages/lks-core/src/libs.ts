@@ -15,7 +15,11 @@ export const getKintoneAppsFromEnv = (): KintoneApps => {
   const baseUrl = env.require("KINTONE_BASE_URL");
   const issue: KintoneAppConfig = {
     id: env.require("KINTONE_ISSUE_APP_ID"),
-    token: env.require("KINTONE_ISSUE_APP_TOKEN"),
+    token: [
+      env.require("KINTONE_ISSUE_APP_TOKEN"),
+      env.require("KINTONE_PROJECT_APP_TOKEN"),
+      env.require("KINTONE_STATE_APP_TOKEN"),
+    ],
     fieldCodeOfPrimaryKey: "$id",
   };
   const project: KintoneAppConfig = {
@@ -32,13 +36,14 @@ export const getKintoneAppsFromEnv = (): KintoneApps => {
 };
 
 export const getKintoneClient = (apps: KintoneApps, type: KintoneAppTypes) => {
-  let apiToken = "";
+  let apiToken: string | string[];
   switch (type) {
     case "issue":
       apiToken = apps.issue.token;
       break;
     case "project":
       apiToken = apps.project.token;
+      break;
   }
 
   return new KintoneRestAPIClient({

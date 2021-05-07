@@ -1,6 +1,6 @@
 export interface KintoneAppConfig {
   id: string;
-  token: string;
+  token: string | string[];
   fieldCodeOfPrimaryKey: string;
 }
 
