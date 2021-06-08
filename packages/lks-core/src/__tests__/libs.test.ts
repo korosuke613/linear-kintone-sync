@@ -8,6 +8,8 @@ process.env.KINTONE_PROJECT_APP_ID = "b";
 process.env.KINTONE_PROJECT_APP_TOKEN = "c";
 process.env.KINTONE_STATE_APP_ID = "b";
 process.env.KINTONE_STATE_APP_TOKEN = "c";
+process.env.KINTONE_COMMENT_APP_ID = "d";
+process.env.KINTONE_COMMENT_APP_TOKEN = "e";
 
 test("#getKintoneAppsFromEnv", () => {
   const actual = getKintoneAppsFromEnv();
@@ -21,6 +23,11 @@ test("#getKintoneAppsFromEnv", () => {
     project: {
       id: "b",
       token: "c",
+      fieldCodeOfPrimaryKey: "id",
+    },
+    comment: {
+      id: "d",
+      token: ["e", "c"],
       fieldCodeOfPrimaryKey: "id",
     },
   };

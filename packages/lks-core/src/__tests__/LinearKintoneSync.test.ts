@@ -18,6 +18,11 @@ const dummyKintoneApps: KintoneApps = {
     token: "token",
     fieldCodeOfPrimaryKey: "id",
   },
+  comment: {
+    id: "0",
+    token: "token",
+    fieldCodeOfPrimaryKey: "id",
+  },
 };
 
 let lks: LinearKintoneSync;
@@ -179,6 +184,11 @@ describe(LinearKintoneSync, () => {
           fieldCodeOfPrimaryKey: "invalid",
         },
         project: {
+          id: "0",
+          token: "token",
+          fieldCodeOfPrimaryKey: "invalid",
+        },
+        comment: {
           id: "0",
           token: "token",
           fieldCodeOfPrimaryKey: "invalid",

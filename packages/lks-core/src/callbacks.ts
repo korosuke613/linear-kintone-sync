@@ -1,4 +1,8 @@
-import { UpdateIssueWebhook } from "linear-webhook";
+import {
+  CreateCommentWebhook,
+  UpdateCommentWebhook,
+  UpdateIssueWebhook,
+} from "linear-webhook";
 import {
   addIssue,
   addProjectIfProjectNotFound,
@@ -128,6 +132,65 @@ export const updateProject = async (
 
   await client.record.updateRecord(param).then((event) => {
     console.info("updateProject\n", event.revision);
+  });
+
+  return param;
+};
+
+export const addComment = async (
+  webhook: CreateCommentWebhook | UpdateCommentWebhook,
+  apps: KintoneApps
+) => {
+  const client = getKintoneClient(apps, "comment");
+  const data = webhook.data;
+
+  if ("url" in webhook) {
+    data.Url = webhook.url;
+  }
+
+  return addRecord(client, apps, "comment", data, "createComment");
+};
+
+export const updateComment = async (
+  webhook: UpdateCommentWebhook,
+  apps: KintoneApps
+) => {
+  const client = getKintoneClient(apps, "comment");
+  const data = webhook.data;
+
+  console.log("--- Call getRecord() ---");
+  const existsComment = await getRecord(webhook, apps, "comment");
+  if (existsComment === undefined) {
+    console.info(
+      `Create Comment, ${apps.comment.fieldCodeOfPrimaryKey}: ${
+        data[apps.comment.fieldCodeOfPrimaryKey]
+      }`
+    );
+    console.log("--- Call addComment() ---");
+    return addComment(webhook, apps);
+  }
+
+  if ("url" in webhook) {
+    data.Url = webhook.url;
+  }
+
+  console.log("--- Exec updateRecord ---");
+  const record = generateKintoneRecordParam(data);
+  delete record[apps.comment.fieldCodeOfPrimaryKey];
+  const updateKeyValue = getKeyValue(data, apps, "comment");
+
+  const param = {
+    app: apps.comment.id,
+    updateKey: {
+      field: apps.comment.fieldCodeOfPrimaryKey,
+      value: updateKeyValue,
+    },
+    record: record,
+  };
+  console.debug(JSON.stringify(param, null, 2));
+
+  await client.record.updateRecord(param).then((event) => {
+    console.info("updateComment\n", event.revision);
   });
 
   return param;

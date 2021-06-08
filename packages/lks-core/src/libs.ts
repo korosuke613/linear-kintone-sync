@@ -27,11 +27,20 @@ export const getKintoneAppsFromEnv = (): KintoneApps => {
     token: env.require("KINTONE_PROJECT_APP_TOKEN"),
     fieldCodeOfPrimaryKey: "id",
   };
+  const comment: KintoneAppConfig = {
+    id: env.require("KINTONE_COMMENT_APP_ID"),
+    token: [
+      env.require("KINTONE_COMMENT_APP_TOKEN"),
+      env.require("KINTONE_ISSUE_APP_TOKEN"),
+    ],
+    fieldCodeOfPrimaryKey: "id",
+  };
 
   return {
     baseUrl,
     issue,
     project,
+    comment,
   };
 };
 
@@ -43,6 +52,9 @@ export const getKintoneClient = (apps: KintoneApps, type: KintoneAppTypes) => {
       break;
     case "project":
       apiToken = apps.project.token;
+      break;
+    case "comment":
+      apiToken = apps.comment.token;
       break;
   }
 
