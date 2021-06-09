@@ -6,7 +6,11 @@ import {
   KintoneAppTypes,
   RecordForParameter,
 } from "./types";
-import { Webhook } from "linear-webhook";
+import {
+  CreateIssueWebhook,
+  UpdateIssueWebhook,
+  Webhook,
+} from "linear-webhook";
 import { addProjectByRecord } from "./callbacks";
 
 export const getKintoneAppsFromEnv = (): KintoneApps => {
@@ -186,14 +190,17 @@ export const getRecordById = async (
   return records[0];
 };
 
-export const addIssue = async (webhook: Webhook, apps: KintoneApps) => {
+export const addIssue = async (
+  webhook: CreateIssueWebhook | UpdateIssueWebhook,
+  apps: KintoneApps
+) => {
   const client = getKintoneClient(apps, "issue");
 
   const param = {
     app: apps.issue.id,
     record: {
       id: {
-        value: "unknown",
+        value: webhook.data.id,
       },
     },
   };
