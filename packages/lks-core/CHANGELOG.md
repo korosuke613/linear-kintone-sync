@@ -1,3 +1,17 @@
+# [0.3.0](https://github.com/korosuke613/linear-kintone-sync/compare/v0.2.0...v0.3.0) (2021-06-09)
+
+
+### Bug Fixes
+
+* unused unknown id ([9add0bf](https://github.com/korosuke613/linear-kintone-sync/commit/9add0bfa30b6044ea8d89999c040906c36e0b4f1))
+
+
+### Features
+
+* support comment ([f8fe59e](https://github.com/korosuke613/linear-kintone-sync/commit/f8fe59e1ca7b3782068dfb915f170bb6a3cb6839))
+
+
+
 # [0.2.0](https://github.com/korosuke613/linear-kintone-sync/compare/v0.1.0...v0.2.0) (2021-05-07)
 
 
