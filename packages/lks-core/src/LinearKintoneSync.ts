@@ -1,7 +1,13 @@
 import { Webhook, WebhookEventsUnion, WebhookHandler } from "linear-webhook";
 import { KintoneRestAPIError } from "@kintone/rest-api-client";
 import { getKintoneAppsFromEnv } from "./libs";
-import { addProject, updateIssue, updateProject } from "./callbacks";
+import {
+  addComment,
+  addProject,
+  updateComment,
+  updateIssue,
+  updateProject,
+} from "./callbacks";
 import { KintoneApps } from "./types";
 
 export class LinearKintoneSync {
@@ -39,6 +45,9 @@ export class LinearKintoneSync {
     this.handler.addCallback("CreateProjectWebhook", addProject);
     this.handler.addCallback("UpdateProjectWebhook", updateProject);
     this.handler.addCallback("RemoveProjectWebhook", updateProject);
+    this.handler.addCallback("CreateCommentWebhook", addComment);
+    this.handler.addCallback("UpdateCommentWebhook", updateComment);
+    this.handler.addCallback("RemoveCommentWebhook", updateComment);
   }
 
   addCustomCallback<T extends Webhook>(

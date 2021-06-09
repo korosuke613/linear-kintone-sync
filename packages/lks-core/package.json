@@ -8,6 +8,7 @@
     "build:compile": "run-p compile",
     "compile": "run-p -l compile:*",
     "compile:cjs": "tsc",
+    "packaging": "run-p build && npm pack",
     "clean": "rimraf lib",
     "prerelease": "npm-run-all -p lint test build",
     "lint": "eslint --max-warnings 0 'src/**/*.ts'",
