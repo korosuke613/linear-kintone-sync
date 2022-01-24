@@ -15,6 +15,10 @@
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
+  "packageManager": "yarn@1.22.17",
+  "engines": {
+    "node": "16"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/korosuke613/linear-kintone-sync.git"
