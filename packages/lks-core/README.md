@@ -12,9 +12,9 @@ All webhook types are [here](https://github.com/korosuke613/linear-webhook/blob/
 - [x] CreateCommentWebhook
 - [x] UpdateCommentWebhook
 - [x] RemoveCommentWebhook
-- [ ] CreateIssueLabelWebhook
-- [ ] UpdateIssueLabelWebhook
-- [ ] RemoveIssueLabelWebhook
+- [x] CreateIssueLabelWebhook
+- [x] UpdateIssueLabelWebhook
+- [x] RemoveIssueLabelWebhook
 - [ ] CreateReactionWebhook
 - [ ] UpdateCycleWebhook
 - [x] CreateProjectWebhook

@@ -10,6 +10,8 @@ process.env.KINTONE_STATE_APP_ID = "b";
 process.env.KINTONE_STATE_APP_TOKEN = "c";
 process.env.KINTONE_COMMENT_APP_ID = "d";
 process.env.KINTONE_COMMENT_APP_TOKEN = "e";
+process.env.KINTONE_ISSUE_LABEL_APP_ID = "f";
+process.env.KINTONE_ISSUE_LABEL_APP_TOKEN = "t";
 
 test("#getKintoneAppsFromEnv", () => {
   const actual = getKintoneAppsFromEnv();
@@ -28,6 +30,11 @@ test("#getKintoneAppsFromEnv", () => {
     comment: {
       id: "d",
       token: ["e", "c"],
+      fieldCodeOfPrimaryKey: "id",
+    },
+    issueLabel: {
+      id: "f",
+      token: ["t"],
       fieldCodeOfPrimaryKey: "id",
     },
   };
