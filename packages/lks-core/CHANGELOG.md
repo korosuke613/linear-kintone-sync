@@ -1,3 +1,12 @@
+# [0.4.0](https://github.com/korosuke613/linear-kintone-sync/compare/v0.3.0...v0.4.0) (2022-01-24)
+
+
+### Features
+
+* support IssueLabel ([9fa1406](https://github.com/korosuke613/linear-kintone-sync/commit/9fa14063b5fdf5923ff12aeb7a67b7e9131f0e3a))
+
+
+
 # [0.3.0](https://github.com/korosuke613/linear-kintone-sync/compare/v0.2.0...v0.3.0) (2021-06-09)
 
 
