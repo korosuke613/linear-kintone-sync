@@ -4,8 +4,10 @@ import { getKintoneAppsFromEnv } from "./libs";
 import {
   addComment,
   addProject,
+  createIssueLabel,
   updateComment,
   updateIssue,
+  updateIssueLabel,
   updateProject,
 } from "./callbacks";
 import { KintoneApps } from "./types";
@@ -48,6 +50,9 @@ export class LinearKintoneSync {
     this.handler.addCallback("CreateCommentWebhook", addComment);
     this.handler.addCallback("UpdateCommentWebhook", updateComment);
     this.handler.addCallback("RemoveCommentWebhook", updateComment);
+    this.handler.addCallback("CreateIssueLabelWebhook", createIssueLabel);
+    this.handler.addCallback("UpdateIssueLabelWebhook", updateIssueLabel);
+    this.handler.addCallback("RemoveIssueLabelWebhook", updateIssueLabel);
   }
 
   addCustomCallback<T extends Webhook>(

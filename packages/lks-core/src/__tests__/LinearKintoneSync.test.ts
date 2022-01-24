@@ -5,6 +5,8 @@ import { createIssue } from "./data/createIssue";
 import { CreateIssueWebhook } from "linear-webhook";
 import { updateIssueForLabel } from "./data/updateIssue";
 import { removeIssue } from "./data/removeIssue";
+import { createIssueLabel } from "./data/createIssueLabel";
+import { updateIssueLabel } from "./data/updateIssueLabel";
 
 const dummyKintoneApps: KintoneApps = {
   baseUrl: "https://korosuke613.cybozu.com",
@@ -19,6 +21,11 @@ const dummyKintoneApps: KintoneApps = {
     fieldCodeOfPrimaryKey: "id",
   },
   comment: {
+    id: "0",
+    token: "token",
+    fieldCodeOfPrimaryKey: "id",
+  },
+  issueLabel: {
     id: "0",
     token: "token",
     fieldCodeOfPrimaryKey: "id",
@@ -193,6 +200,11 @@ describe(LinearKintoneSync, () => {
           token: "token",
           fieldCodeOfPrimaryKey: "invalid",
         },
+        issueLabel: {
+          id: "0",
+          token: "token",
+          fieldCodeOfPrimaryKey: "invalid",
+        },
       };
 
       await expect(() => {
@@ -329,5 +341,92 @@ describe(LinearKintoneSync, () => {
 
     const actual = await lks.handle(createIssue);
     expect(actual).toEqual("236e0fe8-xxxx-xxxx-xxxx-b2df06e33810");
+  });
+
+  test("#handle CreateIssueLabel", async () => {
+    nock(dummyKintoneApps.baseUrl)
+      .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2212%22")
+      .reply(200, { records: [{ hoge: "hoge" }] });
+    nock(dummyKintoneApps.baseUrl)
+      .post("/k/v1/record.json")
+      .reply(200, { id: 0, revision: 1 });
+
+    const actual = await lks.handle(createIssueLabel);
+    const expected = {
+      param: {
+        app: "0",
+        record: {
+          id: {
+            value: "13aa50db-xxxx-xxxx-xxxx-1cdd26695e65",
+          },
+          createdAt: {
+            value: "2021-02-07T09:17:51.393Z",
+          },
+          creatorId: {
+            value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+          },
+          color: {
+            value: "#5a450d",
+          },
+          teamId: {
+            value: "eeaa0cbd-xxxx-xxxx-xxxx-1c701c3485f1",
+          },
+          name: {
+            value: "new label",
+          },
+          updatedAt: {
+            value: "2021-02-07T09:17:51.393Z",
+          },
+        },
+      },
+      result: {
+        id: 0,
+        revision: 1,
+      },
+    };
+
+    expect(actual).toEqual(expected);
+  });
+
+  test("#handle UpdateIssueLabel", async () => {
+    nock(dummyKintoneApps.baseUrl)
+      .get(
+        "/k/v1/records.json?app=0&query=id%20%3D%20%2213aa50db-xxxx-xxxx-xxxx-1cdd26695e65%22"
+      )
+      .reply(200, { records: [{ hoge: "hoge" }] });
+    nock(dummyKintoneApps.baseUrl)
+      .put("/k/v1/record.json")
+      .reply(200, { revision: 1 });
+
+    const actual = await lks.handle(updateIssueLabel);
+    const expected = {
+      app: "0",
+      record: {
+        createdAt: {
+          value: "2021-02-07T09:17:51.393Z",
+        },
+        creatorId: {
+          value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+        },
+        color: {
+          value: "#5a450d",
+        },
+        teamId: {
+          value: "eeaa0cbd-xxxx-xxxx-xxxx-1c701c3485f1",
+        },
+        name: {
+          value: "update new label",
+        },
+        updatedAt: {
+          value: "2021-02-07T09:33:32.156Z",
+        },
+      },
+      updateKey: {
+        field: "id",
+        value: "13aa50db-xxxx-xxxx-xxxx-1cdd26695e65",
+      },
+    };
+
+    expect(actual).toEqual(expected);
   });
 });

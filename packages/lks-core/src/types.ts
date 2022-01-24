@@ -9,9 +9,10 @@ export interface KintoneApps {
   issue: KintoneAppConfig;
   project: KintoneAppConfig;
   comment: KintoneAppConfig;
+  issueLabel: KintoneAppConfig;
 }
 
-export type KintoneAppTypes = "issue" | "project" | "comment";
+export type KintoneAppTypes = "issue" | "project" | "comment" | "issueLabel";
 
 export type RecordForParameter = {
   [fieldCode: string]: {
