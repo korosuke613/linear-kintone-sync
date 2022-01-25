@@ -23,6 +23,7 @@ export const getKintoneAppsFromEnv = (): KintoneApps => {
       env.require("KINTONE_ISSUE_APP_TOKEN"),
       env.require("KINTONE_PROJECT_APP_TOKEN"),
       env.require("KINTONE_STATE_APP_TOKEN"),
+      env.require("KINTONE_ISSUE_LABEL_APP_TOKEN"),
     ],
     fieldCodeOfPrimaryKey: "$id",
   };
@@ -83,14 +84,45 @@ export const generateKintoneRecordParam = (data: Record<string, any>) => {
 
   for (const [key, value] of Object.entries(data)) {
     const stringValue = value.toString();
+
     if (typeof value === "object" && stringValue === "[object Object]") {
       continue;
     }
+
+    // labelIdsの場合のみデータ構造が違うので変換する
+    // テーブルのフィールドコードを`LabelIdsTable`とする
+    if (Array.isArray(value) && value.length !== 0 && key === "labelIds") {
+      const tableValue = convertLabelIdsToTable(value);
+      record.LabelIdsTable = { value: tableValue };
+      continue;
+    }
+
     record[key] = {
       value: stringValue,
     };
   }
   return record;
+};
+
+// labelIdsをkintoneのテーブル形式に直す
+const convertLabelIdsToTable = (labelIds: string[]) => {
+  const tableValue: Array<{
+    value: {
+      labelId: {
+        value: string;
+      };
+    };
+  }> = labelIds.map((labelId) => {
+    return {
+      value: {
+        labelId: {
+          value: labelId,
+        },
+      },
+    };
+  });
+
+  return tableValue;
 };
 
 export const addRecord = async (
