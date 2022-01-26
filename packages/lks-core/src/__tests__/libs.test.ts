@@ -19,7 +19,7 @@ test("#getKintoneAppsFromEnv", () => {
     baseUrl: "a",
     issue: {
       id: "b",
-      token: ["c", "c", "c"],
+      token: ["c", "c", "c", "t"],
       fieldCodeOfPrimaryKey: "$id",
     },
     project: {

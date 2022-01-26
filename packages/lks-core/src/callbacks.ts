@@ -17,6 +17,7 @@ import {
 } from "./libs";
 import { KintoneApps } from "./types";
 
+// Issueの作成、更新、削除時に呼ばれる
 export const updateIssue = async (
   webhook: UpdateIssueWebhook,
   apps: KintoneApps

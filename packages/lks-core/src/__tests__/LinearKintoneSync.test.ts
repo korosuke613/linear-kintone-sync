@@ -7,6 +7,7 @@ import { updateIssueForLabel } from "./data/updateIssue";
 import { removeIssue } from "./data/removeIssue";
 import { createIssueLabel } from "./data/createIssueLabel";
 import { updateIssueLabel } from "./data/updateIssueLabel";
+import { updateIssueWithAddIssueLabel } from "./data/updateIssueWithAddIssueLabel";
 
 const dummyKintoneApps: KintoneApps = {
   baseUrl: "https://korosuke613.cybozu.com",
@@ -175,6 +176,94 @@ describe(LinearKintoneSync, () => {
           },
           Url: {
             value: "https://linear.app/korosuke613/issue/KOR-11/webhook-test",
+          },
+        },
+      };
+
+      expect(actual).toEqual(expected);
+    });
+
+    test("正常系（issueLabel付き）", async () => {
+      nock(dummyKintoneApps.baseUrl)
+        .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2257%22")
+        .reply(200, { records: [{ hoge: "hoge" }] });
+      nock(dummyKintoneApps.baseUrl)
+        .put("/k/v1/record.json")
+        .reply(200, { revision: 1 });
+
+      const actual = await lks.handle(updateIssueWithAddIssueLabel);
+      const expected = {
+        app: "0",
+        id: 57,
+        record: {
+          LabelIdsTable: {
+            value: [
+              {
+                value: {
+                  labelId: {
+                    value: "80a1fec2-xxxx-xxxx-xxxx-0ad8b5e394e8",
+                  },
+                },
+              },
+              {
+                value: {
+                  labelId: {
+                    value: "80a1fec2-xxxx-xxxx-xxxx-0ad8b5e394eb",
+                  },
+                },
+              },
+            ],
+          },
+          id: {
+            value: "0d69dbdd-xxxx-xxxx-xxxx-ae377ce0db02",
+          },
+          boardOrder: {
+            value: "-4216.72",
+          },
+          createdAt: {
+            value: "2021-04-17T09:02:47.183Z",
+          },
+          subscriberIds: {
+            value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+          },
+          previousIdentifiers: {
+            value: "",
+          },
+          creatorId: {
+            value: "80e102b0-xxxx-xxxx-xxxx-044bcfb4cd39",
+          },
+          cycleId: {
+            value: "7ad73f6d-xxxx-xxxx-xxxx-581c67a609b5",
+          },
+          number: {
+            value: "57",
+          },
+          priority: {
+            value: "0",
+          },
+          priorityLabel: {
+            value: "No priority",
+          },
+          stateId: {
+            value: "76984209-xxxx-xxxx-xxxx-78eb458a7cbe",
+          },
+          teamId: {
+            value: "eeaa0cbd-xxxx-xxxx-xxxx-1c701c3485f1",
+          },
+          title: {
+            value: "aaaa",
+          },
+          updatedAt: {
+            value: "2022-01-25T10:35:50.570Z",
+          },
+          Url: {
+            value: "https://linear.app/hogehoge/issue/KOR-57/aaaa",
+          },
+          sortOrder: {
+            value: "-4216.72",
+          },
+          startedAt: {
+            value: "2021-04-17T09:02:47.204Z",
           },
         },
       };
