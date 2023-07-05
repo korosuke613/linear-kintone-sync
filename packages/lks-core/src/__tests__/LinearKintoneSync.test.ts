@@ -324,7 +324,7 @@ describe(LinearKintoneSync, () => {
         });
       try {
         await lks.handle(updateIssueForLabel);
-      } catch (e) {
+      } catch (e: any) {
         expect(e.headers).toEqual({});
       }
     });

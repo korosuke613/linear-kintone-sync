@@ -8,10 +8,21 @@ import {
 } from "./types";
 import {
   CreateIssueWebhook,
+  IssueData,
   UpdateIssueWebhook,
   Webhook,
 } from "linear-webhook";
 import { addProjectByRecord } from "./callbacks";
+
+export type LinearData = Record<
+  string,
+  | number
+  | string
+  | string[]
+  | null
+  | Record<string, unknown>
+  | Array<Record<string, unknown>>
+>;
 
 export const getKintoneAppsFromEnv = (): KintoneApps => {
   const env = new Env();
@@ -83,7 +94,9 @@ export const generateKintoneRecordParam = (data: Record<string, any>) => {
   const record: RecordForParameter = {};
 
   for (const [key, value] of Object.entries(data)) {
-    const stringValue = value.toString();
+    console.log({ key, value });
+
+    const stringValue = value !== null ? value.toString() : "";
 
     if (typeof value === "object" && stringValue === "[object Object]") {
       continue;
@@ -92,7 +105,7 @@ export const generateKintoneRecordParam = (data: Record<string, any>) => {
     // labelIdsの場合のみデータ構造が違うので変換する
     // テーブルのフィールドコードを`LabelIdsTable`とする
     if (Array.isArray(value) && value.length !== 0 && key === "labelIds") {
-      const tableValue = convertLabelIdsToTable(value);
+      const tableValue = convertLabelIdsToTable(value as string[]);
       record.LabelIdsTable = { value: tableValue };
       continue;
     }
