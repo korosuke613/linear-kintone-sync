@@ -1,3 +1,12 @@
+## [0.5.1](https://github.com/korosuke613/linear-kintone-sync/compare/v0.5.0...v0.5.1) (2023-07-05)
+
+
+### Bug Fixes
+
+* check has toString ([#36](https://github.com/korosuke613/linear-kintone-sync/issues/36)) ([9d0fb44](https://github.com/korosuke613/linear-kintone-sync/commit/9d0fb44a78fe39865b64fc2d82f5a446cbcdf634))
+
+
+
 # [0.5.0](https://github.com/korosuke613/linear-kintone-sync/compare/v0.4.0...v0.5.0) (2022-01-26)
 
 
