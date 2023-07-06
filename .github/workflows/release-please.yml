@@ -31,14 +31,14 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['packages/lks-core--release_created'] }}
 
       - name: Build
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['packages/lks-core--release_created'] }}
         run: npm run -w packages/lks-core build
 
       - name: Publish
+        if: ${{ steps.release.outputs['packages/lks-core--release_created'] }}
         run: npm publish -w packages/lks-core --provenance
-        if: ${{ steps.release.outputs.release_created }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

@@ -230,7 +230,7 @@ export const updateIssueLabel = async (
     return createIssueLabel(webhook, apps);
   }
 
-  console.log("--- Exec updateRecord ---");
+  console.log("--- Exec updateRecord() ---");
   const record = generateKintoneRecordParam(data);
   delete record[apps.issueLabel.fieldCodeOfPrimaryKey];
   const updateKeyValue = getKeyValue(data, apps, "issueLabel");
