@@ -16,9 +16,12 @@
     "rimraf": "^3.0.2"
   },
   "engines": {
-    "node": "16"
+    "node": "18"
   },
-  "packageManager": "npm@8.1.2",
+  "scripts": {
+    "test": "npm run --workspace packages/lks-core test"
+  },
+  "packageManager": "npm@9.5.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/korosuke613/linear-kintone-sync.git"
