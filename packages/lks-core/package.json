@@ -1,6 +1,6 @@
 {
   "name": "linear-kintone-sync",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "description": "Synchronize Linear.app and kintone",
   "main": "index.js",
   "scripts": {
