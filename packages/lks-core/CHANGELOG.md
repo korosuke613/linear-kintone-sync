@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/korosuke613/linear-kintone-sync/compare/linear-kintone-sync-v1.0.0...linear-kintone-sync-v1.1.0) (2023-07-06)
+
+
+### Features
+
+* add log ([5c6f28e](https://github.com/korosuke613/linear-kintone-sync/commit/5c6f28ef146c78e3b1b16db0ffe9fb7f46f6aae2))
+
 ## 1.0.0 (2023-07-06)
 
 
