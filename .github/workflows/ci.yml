@@ -1,9 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -14,32 +11,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: yarn
-      - run: yarn --frozen-lockfile
+          cache: npm
+
+      - run: npm ci
+
       - uses: reviewdog/action-eslint@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
           eslint_flags: "./**/*.{ts,js}"
-      - name: Run eslint
-        run: yarn workspace linear-kintone-sync lint
+
+      - name: Lint
+        run: npm run -w packages/lks-core lint
 
   test:
     name: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: yarn
-      - run: cd packages/lks-core
-      - run: yarn --frozen-lockfile
-      - name: Run Jest
-        run: yarn workspace linear-kintone-sync test:coverage
+          cache: npm
+
+      - run: npm ci
+
+      - name: Test
+        run: npm run -w packages/lks-core test:coverage
+
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
@@ -51,12 +55,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: yarn
-      - run: yarn --frozen-lockfile
-      - name: Run build
-        run: yarn workspace linear-kintone-sync build
-      - name: Run pack
-        run: yarn workspace linear-kintone-sync exec npm pack
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run -w packages/lks-core build
+
+      - name: Pack
+        run: npm -w packages/lks-core pack
