@@ -37,6 +37,7 @@ export class LinearKintoneSync {
       }
       throw e;
     }
+    console.log("--- Finish ---");
     return result;
   }
 
