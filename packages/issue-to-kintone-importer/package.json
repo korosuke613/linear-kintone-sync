@@ -11,13 +11,7 @@
     "clean": "rimraf lib",
     "prerelease": "npm-run-all -p lint test build",
     "lint": "eslint --max-warnings 0 'src/**/*.ts'",
-    "format": "prettier --write 'src/**/*.ts'",
-    "test": "jest",
-    "test:coverage": "jest --coverage"
-  },
-  "packageManager": "yarn@1.22.17",
-  "engines": {
-    "node": "16"
+    "format": "prettier --write 'src/**/*.ts'"
   },
   "repository": {
     "type": "git",
