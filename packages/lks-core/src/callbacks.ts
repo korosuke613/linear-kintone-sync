@@ -118,7 +118,7 @@ export const updateProject = async (
     data.Url = webhook.url;
   }
 
-  console.log("--- Exec updateRecord ---");
+  console.log("--- Exec updateRecord() ---");
   const record = generateKintoneRecordParam(data);
   delete record[apps.project.fieldCodeOfPrimaryKey];
   const updateKeyValue = getKeyValue(data, apps, "project");
