@@ -53,7 +53,7 @@ export const updateIssue = async (
     data.Url = encodeURI(webhook.url);
   }
 
-  console.log("--- Exec updateRecord ---");
+  console.log("--- Exec updateRecord() ---");
   const record = generateKintoneRecordParam(data);
   delete record[apps.issue.fieldCodeOfPrimaryKey];
   const updateKeyValue = getKeyValue(data, apps, "issue");
