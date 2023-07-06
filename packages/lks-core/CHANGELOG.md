@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/korosuke613/linear-kintone-sync/compare/linear-kintone-sync-v1.1.1...linear-kintone-sync-v1.1.2) (2023-07-06)
+
+
+### Bug Fixes
+
+* log message for updateRecord ([aebfed5](https://github.com/korosuke613/linear-kintone-sync/commit/aebfed5dbb940af35e6aa73958ed01dc218155c1))
+
 ## [1.1.1](https://github.com/korosuke613/linear-kintone-sync/compare/linear-kintone-sync-v1.1.0...linear-kintone-sync-v1.1.1) (2023-07-06)
 
 
