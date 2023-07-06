@@ -22,10 +22,10 @@ jobs:
           path: packages/lks-core
 
       - uses: actions/checkout@v3
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['packages/lks-core--release_created'] }}
 
       - uses: actions/setup-node@v3
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['packages/lks-core--release_created'] }}
         with:
           node-version-file: .tool-versions
           cache: npm
