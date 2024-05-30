@@ -253,7 +253,7 @@ export const addIssue = async (
     app: apps.issue.id,
     record: {
       id: {
-        value: webhook.data.id,
+        value: "dummy",
       },
     },
   };
