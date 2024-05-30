@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.6](https://github.com/korosuke613/linear-kintone-sync/compare/linear-kintone-sync-v1.1.5...linear-kintone-sync-v1.1.6) (2024-05-30)
+
+
+### Bug Fixes
+
+* change empty value when addIssue ([dbcde20](https://github.com/korosuke613/linear-kintone-sync/commit/dbcde20d11c5af300354ce7916fe6984f14976a9))
+
 ## [1.1.5](https://github.com/korosuke613/linear-kintone-sync/compare/linear-kintone-sync-v1.1.4...linear-kintone-sync-v1.1.5) (2024-05-30)
 
 
