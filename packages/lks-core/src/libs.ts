@@ -251,11 +251,6 @@ export const addIssue = async (
 
   const param = {
     app: apps.issue.id,
-    record: {
-      id: {
-        value: "dummy",
-      },
-    },
   };
   console.debug(JSON.stringify(param, null, 2));
 
