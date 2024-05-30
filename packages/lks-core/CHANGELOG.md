@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/korosuke613/linear-kintone-sync/compare/linear-kintone-sync-v1.1.4...linear-kintone-sync-v1.1.5) (2024-05-30)
+
+
+### Bug Fixes
+
+* add dummy value in issue id ([a39f1ff](https://github.com/korosuke613/linear-kintone-sync/commit/a39f1ffd8ae4c44b022db2243f880ac38f6c1389))
+
 ## [1.1.4](https://github.com/korosuke613/linear-kintone-sync/compare/linear-kintone-sync-v1.1.3...linear-kintone-sync-v1.1.4) (2023-07-06)
 
 
