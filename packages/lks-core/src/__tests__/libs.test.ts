@@ -1,9 +1,9 @@
 import {
   generateKintoneRecordParam,
   getKintoneAppsFromEnv,
-  LinearData,
+  type LinearData,
 } from "../libs";
-import { KintoneApps } from "../types";
+import type { KintoneApps } from "../types";
 
 process.env.KINTONE_BASE_URL = "a";
 process.env.KINTONE_ISSUE_APP_ID = "b";

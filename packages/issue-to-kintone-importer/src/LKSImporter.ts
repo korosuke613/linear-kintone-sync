@@ -1,6 +1,6 @@
-import { getLinearClient } from "./libs";
-import { Issue, IssueConnection, LinearDocument } from "@linear/sdk";
+import { type Issue, type IssueConnection, LinearDocument } from "@linear/sdk";
 import { createObjectCsvWriter } from "csv-writer";
+import { getLinearClient } from "./libs";
 
 const sleep = (msec: number) =>
   new Promise((resolve) => setTimeout(resolve, msec));
@@ -13,7 +13,7 @@ export class LKSImporter {
    * @private
    */
   private async getIssues() {
-    let allIssues = new Array<Issue>();
+    let allIssues: Issue[] = [];
     let issues: IssueConnection | undefined;
 
     process.stdout.write("fetching Issues");
@@ -32,7 +32,7 @@ export class LKSImporter {
       allIssues = allIssues.concat(issues.nodes);
 
       await sleep(1000);
-    } while (issues?.pageInfo !== undefined && issues.pageInfo.hasNextPage);
+    } while (issues?.pageInfo?.hasNextPage);
 
     return allIssues;
   }
@@ -79,7 +79,7 @@ export class LKSImporter {
     const headerKeys = Object.keys(issues[0]).filter(
       // _ is skipped because it will not be registered in the kintone application.
       // description is skipped because it contains a line feed code.
-      (param) => param.startsWith("_") === false && param !== "description"
+      (param) => param.startsWith("_") === false && param !== "description",
     );
 
     const headers = headerKeys.map((key) => {

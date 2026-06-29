@@ -1,18 +1,17 @@
 import { Env } from "@humanwhocodes/env";
 import { KintoneRestAPIClient } from "@kintone/rest-api-client";
-import {
+import type {
+  CreateIssueWebhook,
+  UpdateIssueWebhook,
+  Webhook,
+} from "linear-webhook";
+import { addProjectByRecord } from "./callbacks";
+import type {
   KintoneAppConfig,
   KintoneApps,
   KintoneAppTypes,
   RecordForParameter,
 } from "./types";
-import {
-  CreateIssueWebhook,
-  IssueData,
-  UpdateIssueWebhook,
-  Webhook,
-} from "linear-webhook";
-import { addProjectByRecord } from "./callbacks";
 
 export type LinearData = Record<
   string,
@@ -143,7 +142,7 @@ export const addRecord = async (
   apps: KintoneApps,
   appType: KintoneAppTypes,
   data: Record<string, unknown>,
-  name: string
+  name: string,
 ) => {
   const record = generateKintoneRecordParam(data);
   const param = {
@@ -154,7 +153,7 @@ export const addRecord = async (
 
   let result = { id: "unknown", revision: "unknown" };
   await client.record.addRecord(param).then((event) => {
-    console.debug(`${name}\n` + event.id, event.revision);
+    console.debug(`${name}\n${event.id}`, event.revision);
     result = event;
   });
 
@@ -168,7 +167,7 @@ export async function sleep(ms: number) {
 export const getKeyValue = (
   data: Webhook["data"],
   apps: KintoneApps,
-  appType: KintoneAppTypes
+  appType: KintoneAppTypes,
 ) => {
   if (appType === "issue") {
     // Issueの場合、kintoneレコードIDとIssue numberを一致させたいので number を返す
@@ -178,7 +177,7 @@ export const getKeyValue = (
   const keyValue = data[apps[appType].fieldCodeOfPrimaryKey] as string | number;
   if (keyValue === undefined) {
     throw new Error(
-      `fieldCodeOfPrimaryKey is invalid: ${apps[appType].fieldCodeOfPrimaryKey}`
+      `fieldCodeOfPrimaryKey is invalid: ${apps[appType].fieldCodeOfPrimaryKey}`,
     );
   }
   return keyValue;
@@ -186,7 +185,7 @@ export const getKeyValue = (
 
 export const addProjectIfProjectNotFound = async (
   apps: KintoneApps,
-  data: { id: string; name: string }
+  data: { id: string; name: string },
 ) => {
   const projectRecord = await getRecordById(apps, "project", data.id);
   if (projectRecord === undefined) {
@@ -197,7 +196,7 @@ export const addProjectIfProjectNotFound = async (
 export const getRecord = async (
   webhook: Webhook,
   apps: KintoneApps,
-  appType: KintoneAppTypes
+  appType: KintoneAppTypes,
 ) => {
   const client = getKintoneClient(apps, appType);
   const data = webhook.data;
@@ -224,7 +223,7 @@ export const getRecord = async (
 export const getRecordById = async (
   apps: KintoneApps,
   appType: KintoneAppTypes,
-  id: string
+  id: string,
 ) => {
   const client = getKintoneClient(apps, appType);
 
@@ -244,8 +243,8 @@ export const getRecordById = async (
 };
 
 export const addIssue = async (
-  webhook: CreateIssueWebhook | UpdateIssueWebhook,
-  apps: KintoneApps
+  _webhook: CreateIssueWebhook | UpdateIssueWebhook,
+  apps: KintoneApps,
 ) => {
   const client = getKintoneClient(apps, "issue");
 
@@ -255,7 +254,7 @@ export const addIssue = async (
   console.debug(JSON.stringify(param, null, 2));
 
   await client.record.addRecord(param).then((event) => {
-    console.info("createIssue\n" + event.id, event.revision);
+    console.info(`createIssue\n${event.id}`, event.revision);
   });
 
   return param;

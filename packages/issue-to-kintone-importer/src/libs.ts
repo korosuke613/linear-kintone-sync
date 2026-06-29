@@ -1,5 +1,5 @@
-import { LinearClient } from "@linear/sdk";
 import { Env } from "@humanwhocodes/env";
+import { LinearClient } from "@linear/sdk";
 
 export const getLinearClient = () => {
   const env = new Env();

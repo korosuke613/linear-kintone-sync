@@ -1,4 +1,4 @@
-import { RemoveIssueLabelWebhook } from "linear-webhook";
+import type { RemoveIssueLabelWebhook } from "linear-webhook";
 
 export const removeIssueLabel: RemoveIssueLabelWebhook = {
   action: "remove",

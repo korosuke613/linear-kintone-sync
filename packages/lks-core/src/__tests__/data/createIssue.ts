@@ -1,4 +1,4 @@
-import { CreateIssueWebhook } from "linear-webhook";
+import type { CreateIssueWebhook } from "linear-webhook";
 
 export const createIssue: CreateIssueWebhook = {
   action: "create",
