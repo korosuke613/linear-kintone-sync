@@ -3,10 +3,11 @@ name: release
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write # npm provenance
+  id-token: write # npm OIDC trusted publishing + provenance
 
 jobs:
   publish:
@@ -28,7 +29,15 @@ jobs:
       - name: Build
         run: pnpm --filter linear-kintone-sync build
 
-      - name: Publish
-        run: pnpm --filter linear-kintone-sync publish --provenance --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      # Staged publishing requires npm >= 11.15.0.
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      # Stages the publish via the OIDC trusted publisher (no token, no 2FA).
+      # It does NOT go live automatically: a maintainer must approve it on
+      # npmjs.com (Staged Packages tab) or via `npm stage approve <id>` (2FA).
+      # Configure the trusted publisher on npmjs.com with "Allow npm stage
+      # publish": GitHub Actions / korosuke613 / linear-kintone-sync / release.yml
+      - name: Stage publish
+        run: npm stage publish --provenance --access public
+        working-directory: packages/lks-core

@@ -17,8 +17,9 @@ pnpm exec biome check .                   # lint & format check (biome)
 
 ## Release
 
-`lks-core` is published to npm by the `release` workflow when a GitHub Release is published.
+`lks-core` is published to npm via OIDC trusted publishing with a manual approval step (staged publishing).
 
 1. Bump `version` in `packages/lks-core/package.json` and merge it to `main`.
-2. Create a GitHub Release with a tag like `linear-kintone-sync-vX.Y.Z`.
-3. The workflow builds and runs `pnpm publish` automatically.
+2. Create a GitHub Release with a tag like `linear-kintone-sync-vX.Y.Z` (this triggers the `release` workflow; it can also be run manually via `workflow_dispatch`).
+3. The workflow builds and **stages** the publish (`npm stage publish`) — it does not go live yet.
+4. Approve the staged package on npmjs.com (Staged Packages tab) or via `npm stage approve <id>` (requires 2FA) to make it live.
