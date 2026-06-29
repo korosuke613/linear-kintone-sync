@@ -2,26 +2,23 @@
   "name": "linear-kintone-sync-packages",
   "version": "1.0.0",
   "description": "Synchronize Linear.app and kintone.",
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
   "private": true,
   "devDependencies": {
-    "@types/node": "^20.3.3",
-    "@cybozu/eslint-config": "^11.0.4",
-    "eslint": "^7.20.0",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.2.1",
-    "rimraf": "^3.0.2"
+    "@biomejs/biome": "2.5.0",
+    "@types/node": "24.13.2",
+    "npm-run-all": "4.1.5",
+    "rimraf": "6.1.3"
   },
   "engines": {
-    "node": "18"
+    "node": "24"
   },
   "scripts": {
-    "test": "npm run --workspace packages/lks-core test"
+    "test": "pnpm --filter linear-kintone-sync test",
+    "check": "biome check .",
+    "lint": "biome lint .",
+    "format": "biome format --write ."
   },
-  "packageManager": "npm@9.5.1",
+  "packageManager": "pnpm@10.28.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/korosuke613/linear-kintone-sync.git"
