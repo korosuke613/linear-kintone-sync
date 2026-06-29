@@ -1,6 +1,9 @@
-import { Webhook, WebhookEventsUnion, WebhookHandler } from "linear-webhook";
 import { KintoneRestAPIError } from "@kintone/rest-api-client";
-import { getKintoneAppsFromEnv } from "./libs";
+import {
+  type Webhook,
+  type WebhookEventsUnion,
+  WebhookHandler,
+} from "linear-webhook";
 import {
   addComment,
   addProject,
@@ -10,7 +13,8 @@ import {
   updateIssueLabel,
   updateProject,
 } from "./callbacks";
-import { KintoneApps } from "./types";
+import { getKintoneAppsFromEnv } from "./libs";
+import type { KintoneApps } from "./types";
 
 export class LinearKintoneSync {
   private handler: WebhookHandler;
@@ -27,7 +31,7 @@ export class LinearKintoneSync {
   }
 
   async handle(webhook: Webhook) {
-    let result;
+    let result: unknown;
     console.log("--- Call handle() ---");
     try {
       result = await this.handler.execCallback(webhook, this.apps);
@@ -58,7 +62,7 @@ export class LinearKintoneSync {
 
   addCustomCallback<T extends Webhook>(
     webhookEvent: WebhookEventsUnion,
-    callback: (webhook: Webhook, param?: any) => any
+    callback: (webhook: Webhook, param?: any) => any,
   ) {
     this.handler.addCallback<T>(webhookEvent, callback);
   }

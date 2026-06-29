@@ -1,11 +1,12 @@
 // eslint-disable-next-line node/no-extraneous-import
+
+import type { CreateIssueWebhook } from "linear-webhook";
 import nock from "nock";
-import { KintoneApps, LinearKintoneSync } from "../index";
+import { type KintoneApps, LinearKintoneSync } from "../index";
 import { createIssue } from "./data/createIssue";
-import { CreateIssueWebhook } from "linear-webhook";
-import { updateIssueForLabel } from "./data/updateIssue";
-import { removeIssue } from "./data/removeIssue";
 import { createIssueLabel } from "./data/createIssueLabel";
+import { removeIssue } from "./data/removeIssue";
+import { updateIssueForLabel } from "./data/updateIssue";
 import { updateIssueLabel } from "./data/updateIssueLabel";
 import { updateIssueWithAddIssueLabel } from "./data/updateIssueWithAddIssueLabel";
 
@@ -310,7 +311,7 @@ describe(LinearKintoneSync, () => {
           code: "ErrorCode",
         });
       await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
-        "[520] [ErrorCode] エラーテスト (123456)"
+        "[520] [ErrorCode] エラーテスト (123456)",
       );
     });
 
@@ -334,7 +335,7 @@ describe(LinearKintoneSync, () => {
         .get("/k/v1/records.json?app=0&query=%24id%20%3D%20%2211%22")
         .reply(200, { records: [{ hoge: "hoge" }, { fuga: "fuga" }] });
       await expect(lks.handle(updateIssueForLabel)).rejects.toThrow(
-        "id is not uniq field"
+        "id is not uniq field",
       );
     });
 
@@ -425,7 +426,7 @@ describe(LinearKintoneSync, () => {
       "CreateIssueWebhook",
       (webhook) => {
         return webhook.data.id;
-      }
+      },
     );
 
     const actual = await lks.handle(createIssue);
@@ -480,7 +481,7 @@ describe(LinearKintoneSync, () => {
   test("#handle UpdateIssueLabel", async () => {
     nock(dummyKintoneApps.baseUrl)
       .get(
-        "/k/v1/records.json?app=0&query=id%20%3D%20%2213aa50db-xxxx-xxxx-xxxx-1cdd26695e65%22"
+        "/k/v1/records.json?app=0&query=id%20%3D%20%2213aa50db-xxxx-xxxx-xxxx-1cdd26695e65%22",
       )
       .reply(200, { records: [{ hoge: "hoge" }] });
     nock(dummyKintoneApps.baseUrl)

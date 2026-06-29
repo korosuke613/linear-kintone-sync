@@ -1,4 +1,4 @@
-import { UpdateProjectWebhook } from "linear-webhook";
+import type { UpdateProjectWebhook } from "linear-webhook";
 
 export const updateProject: UpdateProjectWebhook = {
   action: "update",

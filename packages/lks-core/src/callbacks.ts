@@ -1,4 +1,4 @@
-import {
+import type {
   CreateCommentWebhook,
   CreateIssueLabelWebhook,
   UpdateCommentWebhook,
@@ -15,12 +15,12 @@ import {
   getRecord,
   sleep,
 } from "./libs";
-import { KintoneApps } from "./types";
+import type { KintoneApps } from "./types";
 
 // Issueの作成、更新、削除時に呼ばれる
 export const updateIssue = async (
   webhook: UpdateIssueWebhook,
-  apps: KintoneApps
+  apps: KintoneApps,
 ) => {
   const client = getKintoneClient(apps, "issue");
   const data = webhook.data;
@@ -29,7 +29,7 @@ export const updateIssue = async (
     console.log("--- Call addProjectIfProjectNotFound() ---");
     await addProjectIfProjectNotFound(
       apps,
-      data.project as { id: string; name: string }
+      data.project as { id: string; name: string },
     );
   }
 
@@ -40,7 +40,7 @@ export const updateIssue = async (
       console.info(
         `Create Issue, ${apps.issue.fieldCodeOfPrimaryKey}: ${
           data[apps.issue.fieldCodeOfPrimaryKey]
-        }`
+        }`,
       );
       await addIssue(webhook, apps);
       await sleep(1000);
@@ -74,7 +74,7 @@ export const updateIssue = async (
 
 export const addProject = async (
   webhook: UpdateIssueWebhook,
-  apps: KintoneApps
+  apps: KintoneApps,
 ) => {
   const client = getKintoneClient(apps, "project");
   const data = webhook.data;
@@ -88,7 +88,7 @@ export const addProject = async (
 
 export const addProjectByRecord = async (
   apps: KintoneApps,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
 ) => {
   const client = getKintoneClient(apps, "project");
 
@@ -97,7 +97,7 @@ export const addProjectByRecord = async (
 
 export const updateProject = async (
   webhook: UpdateIssueWebhook,
-  apps: KintoneApps
+  apps: KintoneApps,
 ) => {
   const client = getKintoneClient(apps, "project");
   const data = webhook.data;
@@ -108,7 +108,7 @@ export const updateProject = async (
     console.info(
       `Create Project, ${apps.project.fieldCodeOfPrimaryKey}: ${
         data[apps.project.fieldCodeOfPrimaryKey]
-      }`
+      }`,
     );
     console.log("--- Call addProject() ---");
     return addProject(webhook, apps);
@@ -142,7 +142,7 @@ export const updateProject = async (
 
 export const addComment = async (
   webhook: CreateCommentWebhook | UpdateCommentWebhook,
-  apps: KintoneApps
+  apps: KintoneApps,
 ) => {
   const client = getKintoneClient(apps, "comment");
   const data = webhook.data;
@@ -156,7 +156,7 @@ export const addComment = async (
 
 export const updateComment = async (
   webhook: UpdateCommentWebhook,
-  apps: KintoneApps
+  apps: KintoneApps,
 ) => {
   const client = getKintoneClient(apps, "comment");
   const data = webhook.data;
@@ -167,7 +167,7 @@ export const updateComment = async (
     console.info(
       `Create Comment, ${apps.comment.fieldCodeOfPrimaryKey}: ${
         data[apps.comment.fieldCodeOfPrimaryKey]
-      }`
+      }`,
     );
     console.log("--- Call addComment() ---");
     return addComment(webhook, apps);
@@ -202,7 +202,7 @@ export const updateComment = async (
 // IssueLabelが作成された時、もしくは更新されたIssueLabelが存在しない場合に呼び出し
 export const createIssueLabel = async (
   webhook: CreateIssueLabelWebhook,
-  apps: KintoneApps
+  apps: KintoneApps,
 ) => {
   const client = getKintoneClient(apps, "issueLabel");
   const data = webhook.data;
@@ -213,7 +213,7 @@ export const createIssueLabel = async (
 // IssueLabelが更新、削除された時に呼び出し
 export const updateIssueLabel = async (
   webhook: UpdateIssueLabelWebhook,
-  apps: KintoneApps
+  apps: KintoneApps,
 ) => {
   const client = getKintoneClient(apps, "issueLabel");
   const data = webhook.data;
@@ -224,7 +224,7 @@ export const updateIssueLabel = async (
     console.info(
       `Create Project, ${apps.project.fieldCodeOfPrimaryKey}: ${
         data[apps.project.fieldCodeOfPrimaryKey]
-      }`
+      }`,
     );
     console.log("--- Call createIssueLabel() ---");
     return createIssueLabel(webhook, apps);

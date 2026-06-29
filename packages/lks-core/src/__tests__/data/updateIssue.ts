@@ -1,4 +1,4 @@
-import { UpdateIssueWebhook } from "linear-webhook";
+import type { UpdateIssueWebhook } from "linear-webhook";
 
 export const updateIssueForLabel: UpdateIssueWebhook = {
   action: "update",

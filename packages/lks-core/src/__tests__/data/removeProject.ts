@@ -1,4 +1,4 @@
-import { RemoveProjectWebhook } from "linear-webhook";
+import type { RemoveProjectWebhook } from "linear-webhook";
 
 export const removeProject: RemoveProjectWebhook = {
   action: "remove",
