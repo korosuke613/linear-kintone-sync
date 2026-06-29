@@ -18,7 +18,7 @@
     "lint": "biome lint .",
     "format": "biome format --write ."
   },
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@11.9.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/korosuke613/linear-kintone-sync.git"
